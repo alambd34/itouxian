@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="selected_view" type="id"/>
+
+    <item type="id" name="ptr_content" />
+    <item type="id" name="ptr_text" />
+    <item type="id" name="ptr_progress" />
+    <item type="id" name="empty_view" />
+    <item name="content_layout" type="id"/>
+</resources>
