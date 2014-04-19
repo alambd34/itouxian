@@ -5,4 +5,9 @@
     <color name="black">#000</color>
     <color name="white">#FFF</color>
     <color name="transparent">#00000000</color>
+
+    <color name="text_color_regular">#333</color>
+    <color name="text_color_weak">#999</color>
+    <color name="highlight_color">#AAC9C9C9</color>
+    <color name="highlight_color_dark">#88000000</color>
 </resources>

@@ -1,13 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:orientation="vertical"
-              android:layout_width="fill_parent"
-              android:layout_height="fill_parent"
-        >
-    <TextView
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:text="Hello World, MainActivity"
-            />
-</LinearLayout>
+<android.support.v4.widget.DrawerLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:ptr="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/drawer_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+    <com.itouxian.android.pulltorefresh.PullToRefreshListView
+            android:id="@id/list_feed"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:listSelector="@color/transparent"
+            android:cacheColorHint="@color/transparent"
+            android:scrollbarThumbHorizontal="@drawable/scrollbar_vertical_track"
+            android:scrollbarTrackVertical="@drawable/scrollbar_vertical_track"
+            android:scrollbarThumbVertical="@drawable/scrollbar_vertical_thumb"
+            android:scrollbarSize="4dp"
+            android:footerDividersEnabled="false"
+            android:fadingEdge="none"
+            android:dividerHeight="12dp"
+            ptr:ptrMode="pullFromStart"
+            android:divider="@color/transparent"/>
+    <LinearLayout
+            android:id="@+id/left_view"
+            android:layout_width="240dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="start"
+            android:clickable="true"
+            android:orientation="vertical"
+            android:background="#373b3e"/>
+</android.support.v4.widget.DrawerLayout>
 

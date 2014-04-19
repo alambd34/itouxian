@@ -1,4 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">爱偷闲</string>
+
+    <string name="pull_to_refresh_pull_label">下拉刷新…</string>
+    <string name="pull_to_refresh_release_label">手指松开刷新…</string>
+    <string name="pull_to_refresh_refreshing_label">加载中…</string>
+    <string name="page_next">显示下一页</string>
+    <string name="loading">载入中&#8230;</string>
+
+
+
 </resources>

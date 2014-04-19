@@ -6,5 +6,25 @@
     <item type="id" name="ptr_text" />
     <item type="id" name="ptr_progress" />
     <item type="id" name="empty_view" />
+    <item type="id" name="title_text" />
+
+    <item type="id" name="list_feed" />
+    <item type="id" name="content_box" />
+    <item type="id" name="avatar" />
+    <item type="id" name="user_name" />
+    <item type="id" name="pub_time" />
+    <item type="id" name="feed_title" />
+    <item type="id" name="content" />
+    <item type="id" name="feed_image" />
+
+    <item type="id" name="up_count" />
+    <item type="id" name="down_count" />
+    <item type="id" name="comment_count" />
+    <item type="id" name="share_content" />
+    <item type="id" name="favorite" />
+
+    <item type="id" name="split_v" />
+    <item type="id" name="split_h" />
+
     <item name="content_layout" type="id"/>
 </resources>
