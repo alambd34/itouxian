@@ -3,24 +3,32 @@ package com.itouxian.android.activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
 import android.text.Html;
 import android.text.TextUtils;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.*;
+import com.itouxian.android.PrefsUtil;
 import com.itouxian.android.R;
 import com.itouxian.android.model.Feed;
 import com.itouxian.android.model.FeedData;
+import com.itouxian.android.model.UserInfo;
 import com.itouxian.android.pulltorefresh.PullToRefreshBase;
 import com.itouxian.android.pulltorefresh.PullToRefreshListView;
+import com.itouxian.android.util.Constants;
 import com.itouxian.android.util.HttpUtils;
 import com.itouxian.android.util.IntentUtils;
+import com.itouxian.android.util.Utils;
 import com.itouxian.android.view.GifMovieView;
+import com.itouxian.android.view.LoginDialog;
+import org.w3c.dom.Text;
 import volley.Response;
 import volley.VolleyError;
 import volley.toolbox.ImageLoader;
@@ -50,7 +58,7 @@ public class MainActivity extends BaseActivity implements Response.Listener<Feed
     private TextView mTitleText;
     private DrawerLayout mDrawerLayout;
 
-    private String[] mMenuItems;
+    private ImageLoader mImageLoader;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -83,28 +91,77 @@ public class MainActivity extends BaseActivity implements Response.Listener<Feed
         listView.setOnItemClickListener(this);
 
         mPullToRefresh.setOnRefreshListener(this);
-        initMenuList();
+        mImageLoader = HttpUtils.getImageLoader();
 
+        updateMenuList(Utils.isLogin());
         loadData();
     }
 
-    private void initMenuList() {
-        mMenuItems = getResources().getStringArray(R.array.menu_item);
-        int[] iconIds = new int[]{R.drawable.user_default,
+    private LinearLayout mMenuContainer;
+
+    private void updateMenuList(boolean isLogin) {
+        mMenuContainer = (LinearLayout) findViewById(R.id.left_view);
+        mMenuContainer.removeAllViews();
+
+        int index = 0;
+        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT);
+        LinearLayout.LayoutParams lp1 = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 1);
+
+        LinearLayout loginLayout = new LinearLayout(this);
+        int paddingLeft = dp2px(8);
+        int paddingTop = dp2px(14);
+        loginLayout.setPadding(paddingLeft, paddingTop, paddingLeft, paddingTop);
+        loginLayout.setBackgroundResource(R.drawable.highlight_color);
+        loginLayout.setOnClickListener(this);
+        loginLayout.setId(R.id.menu_item + index);
+        loginLayout.setLayoutParams(lp);
+        mMenuContainer.addView(loginLayout);
+        mMenuContainer.addView(generateDivider(), lp1);
+
+        ImageView userIcon = new ImageView(this);
+        userIcon.setLayoutParams(new LinearLayout.LayoutParams(dp2px(20), dp2px(20)));
+        loginLayout.addView(userIcon);
+
+        TextView loginText = generateView(R.string.login, -1, 0);
+        LinearLayout.LayoutParams lp2 = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT);
+        lp2.setMargins(paddingLeft, 0, 0, 0);
+        loginLayout.addView(loginText, lp2);
+
+        if (isLogin) {
+            UserInfo user = PrefsUtil.getUser();
+            mImageLoader.get(user.icon, ImageLoader.getImageListener(userIcon,
+                    R.drawable.user_default, R.drawable.user_default));
+            loginText.setText(user.nickname);
+        } else {
+            userIcon.setImageResource(R.drawable.user_default);
+            loginText.setText(R.string.login);
+        }
+
+        if (!isLogin) {
+            index += 1;
+            mMenuContainer.addView(generateView(R.string.register, R.drawable.user_default, index), lp);
+            mMenuContainer.addView(generateDivider(), lp1);
+        }
+
+        int[] nameIds = {
+                R.string.settings,
+                PrefsUtil.getThemeMode() == MODE_DAY ? R.string.night : R.string.day,
+                R.string.favorite,
+                R.string.about};
+
+        int[] iconIds = {
                 R.drawable.ic_settings,
                 R.drawable.ic_bulb,
                 R.drawable.ic_favorite_menu,
-                R.drawable.ic_star,
                 R.drawable.ic_info};
 
-        final LinearLayout layout = (LinearLayout) findViewById(R.id.left_view);
-        final LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT);
-        final LinearLayout.LayoutParams lp2 = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 1);
 
-        for (int i = 0; i < mMenuItems.length; i++) {
-            layout.addView(generateView(mMenuItems[i], iconIds[i]), lp);
-            layout.addView(generateDivider(), lp2);
+        int baseIndex = 3;
+        for (int i = 0; i < nameIds.length; i++) {
+            mMenuContainer.addView(generateView(nameIds[i], iconIds[i], baseIndex + i), lp);
+            mMenuContainer.addView(generateDivider(), lp1);
         }
     }
 
@@ -114,19 +171,22 @@ public class MainActivity extends BaseActivity implements Response.Listener<Feed
         return view;
     }
 
-    private TextView generateView(String text, int resId) {
+    private TextView generateView(int nameId, int iconId, int index) {
         final int paddingLeft = dp2px(8);
         final int paddingTop = dp2px(14);
         final TextView tv = new TextView(this);
+        tv.setId(R.id.menu_item + index);
         tv.setTextColor(0xFFEEEEEE);
         tv.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16.f);
-        tv.setText(text);
-        tv.setCompoundDrawablesWithIntrinsicBounds(resId, 0, 0, 0);
-        tv.setCompoundDrawablePadding(paddingLeft);
-        tv.setBackgroundResource(R.drawable.highlight_color);
-        tv.setClickable(true);
+        tv.setText(nameId);
+        if (iconId > 0) {
+            tv.setCompoundDrawablesWithIntrinsicBounds(iconId, 0, 0, 0);
+            tv.setCompoundDrawablePadding(paddingLeft);
+            tv.setBackgroundResource(R.drawable.highlight_color);
+            tv.setOnClickListener(this);
 
-        tv.setPadding(paddingLeft, paddingTop, paddingLeft, paddingTop);
+            tv.setPadding(paddingLeft, paddingTop, paddingLeft, paddingTop);
+        }
 
         return tv;
     }
@@ -168,8 +228,26 @@ public class MainActivity extends BaseActivity implements Response.Listener<Feed
 
     @Override
     public void onRightButtonClicked(View view) {
+        if (!Utils.isLogin()) {
+            new LoginDialog(this, new LoginDialog.OnLoginListener() {
+                @Override
+                public void onLoginSuccess() {
+                    toPostActivity();
+                }
+
+                @Override
+                public void onLoginError() {
+
+                }
+            }).show();
+        } else {
+            toPostActivity();
+        }
+    }
+
+    private void toPostActivity() {
         Intent intent = new Intent(this, FeedPostActivity.class);
-        IntentUtils.startPreviewActivity(this, intent);
+        startActivity(intent);
     }
 
     @Override
@@ -212,11 +290,60 @@ public class MainActivity extends BaseActivity implements Response.Listener<Feed
 
     @Override
     public void onClick(View v) {
-        if (v.getId() == R.id.btn_load) {
+        final int id = v.getId();
+        if (id == R.id.btn_load) {
             mFootView.findViewById(R.id.btn_load).setVisibility(View.GONE);
             mFootView.findViewById(R.id.loading_layout).setVisibility(View.VISIBLE);
             mCurrentPage++;
             loadData();
+        } else {
+            int index = id - R.id.menu_item;
+            switch (index) {
+                case 0:
+                    UserInfo info = PrefsUtil.getUser();
+                    if (null != info && !TextUtils.isEmpty(info.token)) {
+                        Toast.makeText(this, "已登陆", Toast.LENGTH_SHORT).show();
+                    } else {
+                        new LoginDialog(this, new LoginDialog.OnLoginListener() {
+                            @Override
+                            public void onLoginSuccess() {
+                                updateMenuList(true);
+                            }
+
+                            @Override
+                            public void onLoginError() {
+
+                            }
+                        }).show();
+                    }
+                    break;
+                case 1:
+                    break;
+                case 2:
+                    break;
+                case 3:
+                    break;
+                case 4:
+                    int mode;
+                    if (MODE_DAY == PrefsUtil.getThemeMode()) {
+                        mode = MODE_NIGHT;
+                        ((TextView) v).setText(R.string.day);
+                    } else {
+                        mode = MODE_DAY;
+                        ((TextView) v).setText(R.string.night);
+                    }
+
+                    Intent themeIntent = new Intent(Constants.ACTION_THEME_CHANGED);
+                    themeIntent.putExtra(Constants.KEY_THEME_MODE, mode);
+                    PrefsUtil.setThemeMode(mode);
+                    sendBroadcast(themeIntent);
+                    break;
+                case 5:
+                    break;
+                case 6:
+                    break;
+            }
+
         }
     }
 
@@ -240,7 +367,6 @@ public class MainActivity extends BaseActivity implements Response.Listener<Feed
         private Context mContext;
 
         private LayoutInflater mInflater;
-        private ImageLoader mImageLoader;
         private Format mFormat;
         private Date mDate;
 
@@ -255,7 +381,6 @@ public class MainActivity extends BaseActivity implements Response.Listener<Feed
         public FeedAdapter(Context context) {
             mContext = context;
             mInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            mImageLoader = HttpUtils.getImageLoader();
             mFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             mDate = new Date(System.currentTimeMillis());
 
@@ -460,14 +585,33 @@ public class MainActivity extends BaseActivity implements Response.Listener<Feed
             holder.commentText.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Intent intent = new Intent(mContext, CommentActivity.class);
-                    intent.putExtra(IntentUtils.KEY_FEED_ID, feed.id);
-                    IntentUtils.startPreviewActivity(mContext, intent);
+                    final long feedId = feed.id;
+                    if (Utils.isLogin()) {
+                        startCommentActivity(feedId);
+                    } else {
+                        new LoginDialog(MainActivity.this, new LoginDialog.OnLoginListener() {
+                            @Override
+                            public void onLoginSuccess() {
+                                startCommentActivity(feedId);
+                            }
+
+                            @Override
+                            public void onLoginError() {
+
+                            }
+                        });
+                    }
                 }
             });
 
             return convertView;
         }
+    }
+
+    private void startCommentActivity(long id) {
+        Intent intent = new Intent(this, CommentActivity.class);
+        intent.putExtra(IntentUtils.KEY_FEED_ID, id);
+        startActivity(intent);
     }
 
     private class ViewHolder {

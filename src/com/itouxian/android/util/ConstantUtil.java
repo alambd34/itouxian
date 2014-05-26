@@ -11,4 +11,7 @@ public class ConstantUtil {
     public static int FEED_IMAGE_GIF = 3;
     public static int FEED_VIDEO = 4;
     public static int FEED_MUSIC = 5;
+
+    public static final int MODE_DAY = 0;
+    public static final int MODE_NIGHT = 1;
 }

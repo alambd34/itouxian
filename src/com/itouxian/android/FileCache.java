@@ -32,10 +32,6 @@ public class FileCache {
         return getRootDirectory(context) + "/data/";
     }
 
-    public static String getTempCacheDir() {
-        return getSDCardDirectory() + "/u148/";
-    }
-
     public static String getSDCardDirectory() {
         if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())) {
             return Environment.getExternalStorageDirectory().getPath();

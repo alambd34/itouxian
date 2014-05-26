@@ -1,10 +1,10 @@
 package com.itouxian.android.util;
 
-import android.app.ActivityManager;
 import android.content.Context;
 import volley.*;
 import volley.toolbox.*;
 
+import java.io.File;
 import java.util.Map;
 
 /**
@@ -86,5 +86,13 @@ public class HttpUtils {
                                     Response.ErrorListener errorListener) {
         RequestQueue queue = getRequestQueue();
         queue.add(new ByteArrayRequest(url, listener, errorListener));
+    }
+
+    public static void postImage(String url,
+                                 File file,
+                                 Map<String, String> params,
+                                 FileUploadCallback callback) {
+        FileUploadService service = new FileUploadService();
+        service.post(url, file, params, callback);
     }
 }

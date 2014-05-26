@@ -1,11 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string-array name="menu_item">
-        <item>注册</item>
-        <item>设置</item>
-        <item>夜间</item>
-        <item>收藏</item>
-        <item>评分</item>
-        <item>关于</item>
+    <string-array name="tags">
+        <item>生活</item>
+        <item>搞笑</item>
+        <item>爱情</item>
+        <item>语录</item>
+        <item>糗事</item>
+        <item>冷笑话</item>
+        <item>囧图</item>
+        <item>美句</item>
+        <item>恶搞</item>
+        <item>创意</item>
+        <item>笑话</item>
+        <item>童趣</item>
     </string-array>
 </resources>

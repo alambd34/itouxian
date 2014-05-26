@@ -4,8 +4,8 @@ import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.text.TextUtils;
-import com.chenjishi.u148.model.UserInfo;
-import com.chenjishi.u148.util.Constants;
+import com.itouxian.android.model.UserInfo;
+import com.itouxian.android.util.Constants;
 import com.sina.weibo.sdk.auth.Oauth2AccessToken;
 
 /**
@@ -17,6 +17,10 @@ import com.sina.weibo.sdk.auth.Oauth2AccessToken;
  */
 public class PrefsUtil {
     private static Application mContext = App.getInstance();
+
+    private static final String KEY_DRAFT_CONTENT = "draft_content";
+    private static final String KEY_DRAFT_TAGS = "draft_tags";
+    private static final String KEY_DRAFT_FILE = "draft_file_path";
 
     private static final long VERSION_CHECK_INTERVAL = 24 * 60 * 60 * 1000;
 
@@ -48,6 +52,32 @@ public class PrefsUtil {
 
     private static final String KEY_AD_SHOWED = "key_ad_showed";
     private static final String KEY_THEME_MODE = "theme_mode";
+
+    public static void saveDraft(String content, String tags, String path) {
+        SharedPreferences.Editor editor = mContext.getSharedPreferences(CONFIG_FILE_NAME, Context.MODE_PRIVATE).edit();
+        editor.putString(KEY_DRAFT_CONTENT, content);
+        editor.putString(KEY_DRAFT_TAGS, tags);
+        editor.putString(KEY_DRAFT_FILE, path);
+        editor.commit();
+    }
+
+    public static String[] getDraft() {
+        String[] drafts = null;
+        SharedPreferences preferences = mContext.getSharedPreferences(CONFIG_FILE_NAME, Context.MODE_PRIVATE);
+        String content = preferences.getString(KEY_DRAFT_CONTENT, "");
+        String tags = preferences.getString(KEY_DRAFT_TAGS, "");
+        String filePath = preferences.getString(KEY_DRAFT_FILE, "");
+
+        if (!TextUtils.isEmpty(content) &&
+                !TextUtils.isEmpty(tags) && !TextUtils.isEmpty(filePath)) {
+            drafts = new String[3];
+            drafts[0] = content;
+            drafts[1] = tags;
+            drafts[2] = filePath;
+        }
+
+        return drafts;
+    }
 
     public static int getThemeMode() {
         return getIntPreference(KEY_THEME_MODE, Constants.MODE_DAY);

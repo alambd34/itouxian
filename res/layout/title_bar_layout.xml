@@ -1,8 +1,60 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:orientation="vertical"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent">
-
-</LinearLayout>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:id="@+id/title_bar"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/action_bar_height"
+                android:background="@color/gray">
+    <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:background="@drawable/home_up_bg"
+            android:clickable="true"
+            android:onClick="onLeftViewClicked"
+            android:layout_alignParentLeft="true"
+            android:paddingLeft="8dp"
+            android:paddingRight="8dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+        <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:src="@drawable/ic_back"
+                android:paddingTop="@dimen/action_bar_icon_vertical_padding"
+                android:paddingBottom="@dimen/action_bar_icon_vertical_padding"
+                android:layout_marginRight="4dp"
+                android:adjustViewBounds="true"
+                android:contentDescription="@null"
+                android:scaleType="fitCenter"/>
+        <TextView
+                android:id="@+id/title_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:textSize="@dimen/action_bar_subtitle_size"
+                android:textColor="#666"
+                android:text="@string/app_name"/>
+    </LinearLayout>
+    <TextView
+            android:id="@+id/btn_right"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:clickable="true"
+            android:onClick="onRightButtonClicked"
+            android:background="@drawable/btn_gray"
+            android:layout_marginRight="8dp"
+            android:textSize="16sp"
+            android:textColor="#666"
+            android:paddingLeft="12dp"
+            android:paddingTop="6dp"
+            android:paddingRight="12dp"
+            android:paddingBottom="6dp"
+            android:text="发送"
+            android:layout_centerInParent="true"
+            android:layout_alignParentRight="true"/>
+    <View
+            android:id="@+id/split_h"
+            android:layout_width="match_parent"
+            android:layout_height="1px"
+            android:layout_alignParentBottom="true"
+            android:background="#cacaca"/>
+</RelativeLayout>

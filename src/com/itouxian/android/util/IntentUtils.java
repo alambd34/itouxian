@@ -33,11 +33,8 @@ public class IntentUtils {
     public static void startPreviewActivity(Context context, Intent intent) {
         final float f = (float) (Runtime.getRuntime().totalMemory() + Debug.getNativeHeapAllocatedSize());
         if (f / (float) Runtime.getRuntime().maxMemory() > .8f) {
-            Log.i("test", "## Memory limited");
             context.startActivity(intent);
         } else {
-            Log.i("test", "## Memory OK");
-
             startPreviewActivity(context, intent, 0);
         }
     }

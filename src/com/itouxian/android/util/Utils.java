@@ -4,15 +4,22 @@ import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.Build;
 import android.os.Handler;
 import android.os.Message;
+import android.view.View;
+import android.widget.Toast;
+import com.itouxian.android.App;
+import com.itouxian.android.PrefsUtil;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Created with IntelliJ IDEA.
@@ -22,6 +29,58 @@ import java.io.InputStream;
  * To change this template use File | Settings | File Templates.
  */
 public class Utils {
+
+    private static final AtomicInteger sNextGeneratedId = new AtomicInteger(1);
+
+    public static int generateViewId() {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN_MR1) {
+            for (; ; ) {
+                final int result = sNextGeneratedId.get();
+                int newValue = result + 1;
+                if (newValue > 0x00FFFFFF) newValue = 1;
+                if (sNextGeneratedId.compareAndSet(result, newValue)) {
+                    return result;
+                }
+            }
+        } else {
+            return View.generateViewId();
+        }
+    }
+
+    public static boolean isLogin() {
+        return null != PrefsUtil.getUser();
+    }
+
+    public static int dp2px(Context context, float dp) {
+        float density = context.getResources().getDisplayMetrics().density;
+        return (int) (density * dp + .5f);
+    }
+
+    public static int calculateInSampleSize(BitmapFactory.Options options, int reqWidth, int reqHeight) {
+        final int height = options.outHeight;
+        final int width = options.outWidth;
+        int inSampleSize = 1;
+
+        if (height > reqHeight || width > reqWidth) {
+            final int halfHeight = height / 2;
+            final int halfWidth = width / 2;
+
+            while ((halfHeight / inSampleSize) > reqHeight
+                    && (halfWidth / inSampleSize) > reqWidth) {
+                inSampleSize *= 2;
+            }
+        }
+
+        return inSampleSize;
+    }
+
+    public static void showToast(String msg) {
+        Toast.makeText(App.getInstance(), msg, Toast.LENGTH_SHORT).show();
+    }
+
+    public static void showToast(int resId) {
+        showToast(App.getInstance().getString(resId));
+    }
     public static Bitmap zoomBitmap(Bitmap bitmap, int w, int h) {
         int width = bitmap.getWidth();
         int height = bitmap.getHeight();

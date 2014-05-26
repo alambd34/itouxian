@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="background">#F0F0F0</color>
+    <color name="background_night">#222</color>
     <color name="action_bar_color">#09C</color>
     <color name="black">#000</color>
     <color name="white">#FFF</color>
@@ -10,4 +11,9 @@
     <color name="text_color_weak">#999</color>
     <color name="highlight_color">#AAC9C9C9</color>
     <color name="highlight_color_dark">#88000000</color>
+    <color name="gray">#E5E5E5</color>
+
+    <color name="action_bar_bg">#FFFF9900</color>
+    <color name="action_bar_bg_night">#B26B00</color>
+    <color name="text_color_summary">#ff666666</color>
 </resources>

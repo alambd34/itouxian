@@ -8,6 +8,28 @@
     <string name="page_next">显示下一页</string>
     <string name="loading">载入中&#8230;</string>
 
+    <string name="confirm">确定</string>
+    <string name="cancel">取消</string>
 
+    <string name="login">登陆</string>
+    <string name="email">邮箱</string>
+    <string name="password">密码</string>
 
+    <string name="register">注册</string>
+    <string name="settings">设置</string>
+    <string name="favorite">收藏</string>
+    <string name="commend">评分</string>
+    <string name="about">关于</string>
+    <string name="night">夜间</string>
+    <string name="day">日间</string>
+
+    <string name="post_content_empty">内容不能为空</string>
+    <string name="post_tags_empty">请选择标签</string>
+    <string name="post_success">发布成功</string>
+    <string name="post_error">发布失败，已保存草稿</string>
+    <string name="send">发送</string>
+    <string name="comment_hint">写下你的评论</string>
+    <string name="comment">评论</string>
+
+    <string name="login_input_empty">请输入用户名和密码</string>
 </resources>

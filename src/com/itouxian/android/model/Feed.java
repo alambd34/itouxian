@@ -36,7 +36,7 @@ public class Feed implements Parcelable {
     public int count_browse;
     public long update_time;
     public long editor_uid;
-    public User usr;
+    public UserInfo usr;
     public int count_hold;
     public int feed_type = ConstantUtil.FEED_UNKNOWN;
 
@@ -83,7 +83,7 @@ public class Feed implements Parcelable {
         count_browse = in.readInt();
         update_time = in.readLong();
         editor_uid = in.readLong();
-        usr = in.readParcelable(User.class.getClassLoader());
+        usr = in.readParcelable(UserInfo.class.getClassLoader());
         count_hold = in.readInt();
         feed_type = in.readInt();
     }
