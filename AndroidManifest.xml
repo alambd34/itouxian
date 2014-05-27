@@ -40,5 +40,11 @@
         <activity android:name=".activity.FavoriteActivity"
                   android:theme="@style/SlideAppTheme"
                   android:screenOrientation="portrait"/>
+        <activity android:name=".activity.SettingsActivity"
+                  android:theme="@style/SlideAppTheme"
+                  android:screenOrientation="portrait"/>
+        <activity android:name=".activity.RegisterActivity"
+                  android:theme="@style/SlideAppTheme"
+                  android:screenOrientation="portrait"/>
     </application>
 </manifest> 

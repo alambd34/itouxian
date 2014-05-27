@@ -22,6 +22,7 @@ import android.content.pm.PackageManager.NameNotFoundException;
 import android.net.http.AndroidHttpClient;
 import android.os.Build;
 
+import com.itouxian.android.FileCache;
 import volley.Network;
 import volley.RequestQueue;
 
@@ -40,7 +41,7 @@ public class Volley {
      * @return A started {@link RequestQueue} instance.
      */
     public static RequestQueue newRequestQueue(Context context, HttpStack stack) {
-        File cacheDir = new File(context.getCacheDir(), DEFAULT_CACHE_DIR);
+        File cacheDir = new File(FileCache.getImageCacheDir(context));
 
         String userAgent = "volley/0";
         try {

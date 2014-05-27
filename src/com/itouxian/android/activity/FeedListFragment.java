@@ -8,7 +8,6 @@ import android.support.v4.app.Fragment;
 import android.text.Html;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -157,7 +156,6 @@ public class FeedListFragment extends Fragment implements Response.Listener<Feed
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         Bundle bundle = getArguments();
         if (null != bundle) {
             mType = bundle.getInt(BUNDLE_KEY_TYPE, FEED_LIST_HOME);

@@ -1,6 +1,7 @@
 package com.itouxian.android.activity;
 
 import android.content.Intent;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -11,16 +12,17 @@ import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.TextView;
-import android.widget.Toast;
+import android.view.WindowManager;
+import android.widget.*;
 import com.itouxian.android.PrefsUtil;
 import com.itouxian.android.R;
 import com.itouxian.android.model.UserInfo;
 import com.itouxian.android.util.Constants;
 import com.itouxian.android.util.HttpUtils;
+import com.itouxian.android.util.IntentUtils;
 import com.itouxian.android.util.Utils;
+import com.itouxian.android.view.AboutDialog;
+import com.itouxian.android.view.FireworksView;
 import com.itouxian.android.view.LoginDialog;
 import volley.toolbox.ImageLoader;
 
@@ -31,6 +33,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener,
         DrawerLayout.DrawerListener, LoginDialog.OnLoginListener {
     private static final int LOGIN_FAVORITE_CLICK = 100;
     private static final int LOGIN_EDIT_CLICK = 101;
+    public static final int REQUEST_CODE_REGISTER = 101;
+    public static final int RESULT_CODE_REGISTER = 102;
 
     private int mLoginClickType;
 
@@ -247,10 +251,11 @@ public class MainActivity extends BaseActivity implements View.OnClickListener,
                 }
                 break;
             case 1:
-                break;
-            case 2:
+                startActivityForResult(new Intent(this, RegisterActivity.class),
+                        REQUEST_CODE_REGISTER);
                 break;
             case 3:
+                startActivity(new Intent(this, SettingsActivity.class));
                 break;
             case 4:
                 int mode;
@@ -276,7 +281,45 @@ public class MainActivity extends BaseActivity implements View.OnClickListener,
                 }
                 break;
             case 6:
+                AboutDialog dialog = new AboutDialog(this, new AboutDialog.AboutDialogListener() {
+                    @Override
+                    public void onVersionClicked() {
+                        easterEgg();
+                    }
+                });
+                dialog.show();
                 break;
+        }
+    }
+
+    private MediaPlayer mPlayer;
+
+    private void easterEgg() {
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        FrameLayout rootView = (FrameLayout) findViewById(android.R.id.content);
+        final FireworksView fireworksView = new FireworksView(this);
+        rootView.addView(fireworksView, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.MATCH_PARENT));
+        mPlayer = MediaPlayer.create(this, R.raw.fireworks);
+        mPlayer.setLooping(true);
+        mPlayer.start();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (null != mPlayer) {
+            mPlayer.release();
+            mPlayer = null;
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == REQUEST_CODE_REGISTER
+                && resultCode == RESULT_CODE_REGISTER) {
+            updateMenuList(true);
         }
     }
 }
