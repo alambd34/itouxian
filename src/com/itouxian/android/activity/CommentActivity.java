@@ -5,7 +5,6 @@ import android.content.Context;
 import android.os.Bundle;
 import android.text.Html;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -41,22 +40,20 @@ import static com.itouxian.android.util.IntentUtils.KEY_FEED_ID;
  */
 public class CommentActivity extends BaseActivity implements Response.Listener<CommentData>, Response.ErrorListener,
         View.OnClickListener, AdapterView.OnItemClickListener {
-    private final String REQUEST_URL = "http://www.itouxian.com/json/get_comment/%1$d/%2$d?token=%3$s";
     private long mFeedId;
-
-    private String mContent;
-    private long mCommentId;
+    private long mReplyId;
+    private int mPage = 1;
 
     private ArrayList<Comment> mCommentList = new ArrayList<Comment>();
+
     private CommentAdapter mAdapter;
 
-    private View emptyView;
-    private int currentPage = 1;
-    private View footView;
-
+    private View mEmptyView;
+    private View mFootView;
     private EditText mEditText;
 
     private String mToken;
+    private String mContent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,23 +62,22 @@ public class CommentActivity extends BaseActivity implements Response.Listener<C
         setTitle(R.string.comment);
 
         mFeedId = getIntent().getExtras().getLong(KEY_FEED_ID);
-        if (mFeedId == 0) finish();
 
         UserInfo userInfo = PrefsUtil.getUser();
         mToken = userInfo.token;
 
-        emptyView = findViewById(R.id.empty_view);
-        footView = LayoutInflater.from(this).inflate(R.layout.load_more, null);
-        Button button = (Button) footView.findViewById(R.id.btn_load);
+        mEmptyView = findViewById(R.id.empty_view);
+        mFootView = LayoutInflater.from(this).inflate(R.layout.load_more, null);
+        Button button = (Button) mFootView.findViewById(R.id.btn_load);
         button.setOnClickListener(this);
 
         mEditText = (EditText) findViewById(R.id.et_content);
 
         mAdapter = new CommentAdapter(this);
         ListView listView = (ListView) findViewById(R.id.list_comment);
-        listView.addFooterView(footView);
-        footView.setVisibility(View.GONE);
-        listView.setEmptyView(emptyView);
+        listView.addFooterView(mFootView);
+        mFootView.setVisibility(View.GONE);
+        listView.setEmptyView(mEmptyView);
         listView.setAdapter(mAdapter);
         listView.setOnItemClickListener(this);
 
@@ -100,63 +96,57 @@ public class CommentActivity extends BaseActivity implements Response.Listener<C
     }
 
     private void loadData() {
-        final String url = String.format(REQUEST_URL, mFeedId, currentPage, mToken);
+        final String url = String.format("http://www.itouxian.com/json/get_comment/%1$d/%2$d?token=%3$s",
+                mFeedId, mPage, mToken);
         HttpUtils.get(url, CommentData.class, this, this);
     }
 
     @Override
     public void onClick(View v) {
-        footView.findViewById(R.id.btn_load).setVisibility(View.GONE);
-        footView.findViewById(R.id.loading_layout).setVisibility(View.VISIBLE);
-        currentPage++;
+        mFootView.findViewById(R.id.btn_load).setVisibility(View.GONE);
+        mFootView.findViewById(R.id.loading_layout).setVisibility(View.VISIBLE);
+        mPage++;
         loadData();
     }
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         final Comment comment = mCommentList.get(position);
-        mEditText.setHint("回复:" + comment.usr.nickname);
+        mEditText.setHint(getString(R.string.reply, comment.usr.nickname));
         mEditText.requestFocus();
         InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.showSoftInput(mEditText, InputMethodManager.SHOW_IMPLICIT);
-        mCommentId = comment.id;
+        mReplyId = comment.id;
     }
 
     public void onSendButtonClicked(View v) {
         String content = mEditText.getText().toString();
 
         if (!TextUtils.isEmpty(content)) {
-            if (mCommentId > 0) {
-                sendComment(content, mCommentId);
-                mCommentId = 0;
-            } else {
-                sendComment(content, 0);
-            }
+            sendComment(content);
+            mReplyId = 0;
         } else {
-            Utils.showToast("评论不能为空");
+            Utils.showToast(R.string.comment_empty);
         }
     }
 
-    private void sendComment(final String content, long id) {
+    private void sendComment(final String content) {
         if (content.equals(mContent)) return;
 
         final String url = "http://www.itouxian.com/json/comment";
         final ProgressDialog pd = new ProgressDialog(this);
-        pd.setMessage("评论提交中...");
+        pd.setMessage(getString(R.string.comment_submitting));
         pd.show();
 
         Map<String, String> params = new HashMap<String, String>();
         params.put("id", String.valueOf(mFeedId));
         params.put("token", mToken);
-        params.put("content", content + " (来自Android客户端)");
-        if (id > 0) {
-            params.put("review_id", String.valueOf(id));
-        }
+        params.put("content", getString(R.string.comment_from, content));
+        params.put("review_id", String.valueOf(mReplyId));
 
         HttpUtils.post(url, params, new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-                        Log.i("test", "response " + response);
                         pd.dismiss();
                         if (!TextUtils.isEmpty(response)) {
                             try {
@@ -168,24 +158,23 @@ public class CommentActivity extends BaseActivity implements Response.Listener<C
                                     mEditText.setHint("");
                                     mEditText.clearFocus();
                                     mContent = content;
-                                    Utils.showToast("评论成功");
+                                    Utils.showToast(R.string.comment_success);
                                     loadData();
                                 } else {
-                                    Utils.showToast("评论失败，请稍后再试");
+                                    Utils.showToast(R.string.comment_fail);
                                 }
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }
                         } else {
-                            Utils.showToast("评论失败，请稍后再试");
+                            Utils.showToast(R.string.comment_fail);
                         }
                     }
                 }, new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Log.i("test", "error " + error);
                         pd.dismiss();
-                        Utils.showToast("评论失败，请稍后再试");
+                        Utils.showToast(R.string.comment_fail);
                     }
                 }
         );
@@ -197,31 +186,31 @@ public class CommentActivity extends BaseActivity implements Response.Listener<C
             final int count = response.data.data.size();
 
             if (count > 0) {
-                if (1 == currentPage) mCommentList.clear();
+                if (1 == mPage) mCommentList.clear();
 
                 mCommentList.addAll(response.data.data);
 
                 if (count >= 30) {
-                    footView.findViewById(R.id.loading_layout).setVisibility(View.GONE);
-                    footView.findViewById(R.id.btn_load).setVisibility(View.VISIBLE);
-                    footView.setVisibility(View.VISIBLE);
+                    mFootView.findViewById(R.id.loading_layout).setVisibility(View.GONE);
+                    mFootView.findViewById(R.id.btn_load).setVisibility(View.VISIBLE);
+                    mFootView.setVisibility(View.VISIBLE);
                 } else {
-                    footView.setVisibility(View.GONE);
+                    mFootView.setVisibility(View.GONE);
                 }
                 mAdapter.notifyDataSetChanged();
             } else {
-//                Utils.setErrorView(emptyView, R.string.no_comment);
-                footView.setVisibility(View.GONE);
+                Utils.setErrorView(mEmptyView, R.string.no_comment);
+                mFootView.setVisibility(View.GONE);
             }
         } else {
-            footView.setVisibility(View.GONE);
+            mFootView.setVisibility(View.GONE);
         }
     }
 
     @Override
     public void onErrorResponse(VolleyError error) {
-        footView.setVisibility(View.GONE);
-
+        Utils.setErrorView(mEmptyView, R.string.net_error);
+        mFootView.setVisibility(View.GONE);
     }
 
     private class CommentAdapter extends BaseAdapter {

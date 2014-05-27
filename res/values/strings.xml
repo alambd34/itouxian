@@ -29,7 +29,17 @@
     <string name="post_error">发布失败，已保存草稿</string>
     <string name="send">发送</string>
     <string name="comment_hint">写下你的评论</string>
+    <string name="comment_empty">评论不能为空</string>
     <string name="comment">评论</string>
+    <string name="no_comment">暂无评论</string>
+    <string name="comment_from">%1$s (来自Android客户端)</string>
+    <string name="comment_fail">评论失败，请稍后再试</string>
+    <string name="comment_success">评论成功</string>
+    <string name="comment_submitting">评论提交中...</string>
+    <string name="reply">回复:%1$s</string>
+    <string name="net_error">网络无连接，请检查网络设置</string>
+    <string name="favorite_success">收藏成功!</string>
+    <string name="favorite_fail">收藏失败!</string>
 
     <string name="login_input_empty">请输入用户名和密码</string>
 </resources>

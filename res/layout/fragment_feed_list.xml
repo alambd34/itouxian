@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.itouxian.android.pulltorefresh.PullToRefreshListView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:ptr="http://schemas.android.com/apk/res-auto"
+        android:id="@id/list_feed"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:listSelector="@color/transparent"
+        android:cacheColorHint="@color/transparent"
+        android:scrollbarThumbHorizontal="@drawable/scrollbar_vertical_track"
+        android:scrollbarTrackVertical="@drawable/scrollbar_vertical_track"
+        android:scrollbarThumbVertical="@drawable/scrollbar_vertical_thumb"
+        android:scrollbarSize="4dp"
+        android:footerDividersEnabled="false"
+        android:fadingEdge="none"
+        android:dividerHeight="12dp"
+        ptr:ptrMode="pullFromStart"
+        android:divider="@color/transparent"/>

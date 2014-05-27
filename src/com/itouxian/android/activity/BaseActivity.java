@@ -9,9 +9,7 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.FrameLayout;
-import android.widget.ImageButton;
-import android.widget.TextView;
+import android.widget.*;
 import com.flurry.android.FlurryAgent;
 import com.itouxian.android.PrefsUtil;
 import com.itouxian.android.R;
@@ -83,7 +81,35 @@ public class BaseActivity extends FragmentActivity {
     protected void setRightButtonIcon(int resId) {
         final ImageButton button = (ImageButton) findViewById(R.id.btn_right);
         button.setImageResource(resId);
-        button.setVisibility(View.VISIBLE);
+        findViewById(R.id.right_view).setVisibility(View.VISIBLE);
+    }
+
+    protected void setRightButtonText(String text) {
+        RelativeLayout rightView = (RelativeLayout) findViewById(R.id.right_view);
+        rightView.removeAllViews();
+
+        int padding = dp2px(6);
+        RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT);
+        lp.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+        lp.addRule(RelativeLayout.CENTER_IN_PARENT);
+        lp.setMargins(0, 0, dp2px(8), 0);
+        TextView tv = new TextView(this);
+        tv.setText(text);
+        tv.setTextColor(0xFF666666);
+        tv.setTextSize(16.f);
+        tv.setLayoutParams(lp);
+        tv.setBackgroundResource(R.drawable.btn_gray);
+        tv.setPadding(2 * padding, padding, 2 * padding, padding);
+        tv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onRightButtonClicked(v);
+            }
+        });
+
+        rightView.addView(tv);
+        rightView.setVisibility(View.VISIBLE);
     }
 
     public void onLeftViewClicked(View view) {
@@ -117,7 +143,24 @@ public class BaseActivity extends FragmentActivity {
     }
 
     protected void applyTheme(int theme) {
+        if (!mHideTitle && mTitleResId == -1) {
+            final RelativeLayout titleView = (RelativeLayout) findViewById(R.id.title_bar);
+            final TextView titleText = (TextView) findViewById(R.id.title_text);
+            final View divider = findViewById(R.id.split_h);
+            final ImageView backBtn = (ImageView) findViewById(R.id.ic_arrow);
 
+            if (Constants.MODE_NIGHT == mTheme) {
+                titleView.setBackgroundColor(0xFF1C1C1C);
+                titleText.setTextColor(0xFF999999);
+                divider.setBackgroundColor(0xFF303030);
+                backBtn.setImageResource(R.drawable.ic_back_night);
+            } else {
+                titleView.setBackgroundColor(0xFFE5E5E5);
+                titleText.setTextColor(0xFF666666);
+                divider.setBackgroundColor(0xFFCACACA);
+                backBtn.setImageResource(R.drawable.ic_back);
+            }
+        }
     }
 
     private class ThemeChangeReceiver extends BroadcastReceiver {

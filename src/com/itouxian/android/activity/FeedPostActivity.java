@@ -62,7 +62,8 @@ public class FeedPostActivity extends BaseActivity implements FileUploadCallback
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_post, R.layout.title_bar_layout);
+        setContentView(R.layout.activity_post);
+        setRightButtonText(getString(R.string.send));
 
         mTagArray = getResources().getStringArray(R.array.tags);
 

@@ -37,5 +37,8 @@
         <activity android:name=".activity.PhotosActivity"
                   android:theme="@style/SlideAppTheme"
                   android:screenOrientation="portrait"/>
+        <activity android:name=".activity.FavoriteActivity"
+                  android:theme="@style/SlideAppTheme"
+                  android:screenOrientation="portrait"/>
     </application>
 </manifest> 

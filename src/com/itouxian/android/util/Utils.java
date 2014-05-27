@@ -12,9 +12,11 @@ import android.os.Build;
 import android.os.Handler;
 import android.os.Message;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 import com.itouxian.android.App;
 import com.itouxian.android.PrefsUtil;
+import com.itouxian.android.R;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -29,6 +31,19 @@ import java.util.concurrent.atomic.AtomicInteger;
  * To change this template use File | Settings | File Templates.
  */
 public class Utils {
+    public static void setErrorView(View errorView, int resId) {
+        setErrorView(errorView, App.getInstance().getString(resId));
+    }
+
+    public static void setErrorView(View errorView, String msg) {
+        final TextView errorText = (TextView) errorView.findViewById(R.id.tv_empty_tip);
+        errorView.findViewById(R.id.progress_bar).setVisibility(View.GONE);
+        errorText.setText(msg);
+        final int mode = PrefsUtil.getThemeMode();
+        errorText.setTextColor(mode == Constants.MODE_NIGHT ? 0xFF999999: 0xFF333333);
+        errorText.setVisibility(View.VISIBLE);
+    }
+
 
     private static final AtomicInteger sNextGeneratedId = new AtomicInteger(1);
 
