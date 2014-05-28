@@ -5,7 +5,8 @@ import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
+import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.text.TextUtils;
 import android.util.TypedValue;
@@ -19,18 +20,20 @@ import com.itouxian.android.R;
 import com.itouxian.android.model.UserInfo;
 import com.itouxian.android.util.Constants;
 import com.itouxian.android.util.HttpUtils;
-import com.itouxian.android.util.IntentUtils;
 import com.itouxian.android.util.Utils;
 import com.itouxian.android.view.AboutDialog;
+import com.itouxian.android.view.ExitDialog;
 import com.itouxian.android.view.FireworksView;
 import com.itouxian.android.view.LoginDialog;
 import volley.toolbox.ImageLoader;
 
+import static com.itouxian.android.activity.FeedListFragment.*;
 import static com.itouxian.android.util.ConstantUtil.MODE_DAY;
 import static com.itouxian.android.util.ConstantUtil.MODE_NIGHT;
 
 public class MainActivity extends BaseActivity implements View.OnClickListener,
-        DrawerLayout.DrawerListener, LoginDialog.OnLoginListener {
+        DrawerLayout.DrawerListener, LoginDialog.OnLoginListener,
+        ViewPager.OnPageChangeListener, RadioGroup.OnCheckedChangeListener {
     private static final int LOGIN_FAVORITE_CLICK = 100;
     private static final int LOGIN_EDIT_CLICK = 101;
     public static final int REQUEST_CODE_REGISTER = 101;
@@ -42,6 +45,10 @@ public class MainActivity extends BaseActivity implements View.OnClickListener,
     private DrawerLayout mDrawerLayout;
 
     private ImageLoader mImageLoader;
+
+    private FeedPagerAdapter mPagerAdapter;
+    private RadioGroup mRadioGroup;
+    private ViewPager mViewPager;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -57,15 +64,16 @@ public class MainActivity extends BaseActivity implements View.OnClickListener,
 
         updateMenuList(Utils.isLogin());
 
-        Bundle bundle = new Bundle();
-        bundle.putInt(FeedListFragment.BUNDLE_KEY_TYPE, FeedListFragment.FEED_LIST_HOME);
-        FeedListFragment fragment = (FeedListFragment) Fragment.instantiate(this,
-                FeedListFragment.class.getName(), bundle);
+        mPagerAdapter = new FeedPagerAdapter(getSupportFragmentManager());
 
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        FragmentTransaction transaction = fragmentManager.beginTransaction();
-        transaction.add(R.id.container, fragment);
-        transaction.commit();
+        mViewPager = (ViewPager) findViewById(R.id.view_pager);
+        mViewPager.setAdapter(mPagerAdapter);
+        mViewPager.setCurrentItem(0);
+        mViewPager.setOnPageChangeListener(this);
+
+        mRadioGroup = (RadioGroup) findViewById(R.id.tab_group);
+        mRadioGroup.setOnCheckedChangeListener(this);
+        mRadioGroup.check(R.id.rb_home);
     }
 
     private LinearLayout mMenuContainer;
@@ -133,6 +141,53 @@ public class MainActivity extends BaseActivity implements View.OnClickListener,
             mMenuContainer.addView(generateView(nameIds[i], iconIds[i], baseIndex + i), lp);
             mMenuContainer.addView(generateDivider(), lp1);
         }
+    }
+
+    @Override
+    public void onCheckedChanged(RadioGroup group, int checkedId) {
+        int index = 0;
+        switch (checkedId) {
+            case R.id.rb_home:
+                index = 0;
+                break;
+            case R.id.rb_now:
+                index = 1;
+                break;
+            case R.id.rb_random:
+                index = 2;
+                break;
+        }
+
+
+        mViewPager.setCurrentItem(index);
+    }
+
+    @Override
+    public void onPageScrolled(int i, float v, int i2) {
+
+    }
+
+    @Override
+    public void onPageSelected(int i) {
+        int id = R.id.rb_home;
+        switch (i) {
+            case 0:
+                id = R.id.rb_home;
+                break;
+            case 1:
+                id = R.id.rb_now;
+                break;
+            case 2:
+                id = R.id.rb_random;
+                break;
+
+        }
+        mRadioGroup.check(id);
+    }
+
+    @Override
+    public void onPageScrollStateChanged(int i) {
+
     }
 
     private View generateDivider() {
@@ -210,11 +265,12 @@ public class MainActivity extends BaseActivity implements View.OnClickListener,
                 toFavoriteActivity();
                 break;
         }
+        updateMenuList(true);
     }
 
     @Override
     public void onLoginError() {
-
+        Utils.showToast(getString(R.string.login_fail));
     }
 
     private void toPostActivity() {
@@ -235,19 +291,16 @@ public class MainActivity extends BaseActivity implements View.OnClickListener,
             case 0:
                 UserInfo info = PrefsUtil.getUser();
                 if (null != info && !TextUtils.isEmpty(info.token)) {
-                    Toast.makeText(this, "已登陆", Toast.LENGTH_SHORT).show();
-                } else {
-                    new LoginDialog(this, new LoginDialog.OnLoginListener() {
+                    new ExitDialog(this, new ExitDialog.OnLogoutListener() {
                         @Override
-                        public void onLoginSuccess() {
-                            updateMenuList(true);
-                        }
-
-                        @Override
-                        public void onLoginError() {
-
+                        public void logout() {
+                            PrefsUtil.setUser(null);
+                            updateMenuList(false);
+                            Utils.showToast(R.string.logout_success);
                         }
                     }).show();
+                } else {
+                    new LoginDialog(this, this).show();
                 }
                 break;
             case 1:
@@ -290,6 +343,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener,
                 dialog.show();
                 break;
         }
+        mDrawerLayout.closeDrawer(Gravity.LEFT);
     }
 
     private MediaPlayer mPlayer;
@@ -306,6 +360,30 @@ public class MainActivity extends BaseActivity implements View.OnClickListener,
         mPlayer.start();
     }
 
+    private long lastBackPressTime;
+    private int backPressCount = 0;
+
+    @Override
+    public void onBackPressed() {
+        if (mDrawerLayout.isDrawerOpen(Gravity.LEFT)) {
+            mDrawerLayout.closeDrawer(Gravity.LEFT);
+        } else {
+            if (backPressCount == 0) {
+                Utils.showToast(R.string.exit_tips);
+                backPressCount += 1;
+                lastBackPressTime = System.currentTimeMillis();
+            } else {
+                if (System.currentTimeMillis() - lastBackPressTime >= 1000L) {
+                    Utils.showToast(R.string.exit_tips);
+                    lastBackPressTime = System.currentTimeMillis();
+                } else {
+                    PrefsUtil.setAdShowed(false);
+                    finish();
+                }
+            }
+        }
+    }
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
@@ -320,6 +398,37 @@ public class MainActivity extends BaseActivity implements View.OnClickListener,
         if (requestCode == REQUEST_CODE_REGISTER
                 && resultCode == RESULT_CODE_REGISTER) {
             updateMenuList(true);
+        }
+    }
+
+    private class FeedPagerAdapter extends FragmentPagerAdapter {
+        private int[] mFeedTypeIds = {
+                FEED_LIST_HOME,
+                FEED_LIST_NOW,
+                FEED_LIST_RANDOM
+        };
+
+        public FeedPagerAdapter(FragmentManager fm) {
+            super(fm);
+        }
+
+        @Override
+        public Fragment getItem(int i) {
+            Bundle bundle = new Bundle();
+            bundle.putInt(BUNDLE_KEY_TYPE, mFeedTypeIds[i]);
+
+            return Fragment.instantiate(MainActivity.this,
+                    FeedListFragment.class.getName(), bundle);
+        }
+
+        @Override
+        public int getItemPosition(Object object) {
+            return POSITION_NONE;
+        }
+
+        @Override
+        public int getCount() {
+            return mFeedTypeIds.length;
         }
     }
 }

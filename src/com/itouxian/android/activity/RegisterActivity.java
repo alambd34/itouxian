@@ -3,7 +3,6 @@ package com.itouxian.android.activity;
 import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -26,7 +25,6 @@ import java.util.regex.Pattern;
  * Created by chenjishi on 14-3-4.
  */
 public class RegisterActivity extends BaseActivity implements Response.Listener<String>, Response.ErrorListener {
-    private static final String REQUEST_URL = "http://www.u148.net/json/register";
     private EditText mEmailEdit;
     private EditText mPasswordEdit;
     private EditText mNickNameEdit;
@@ -46,27 +44,24 @@ public class RegisterActivity extends BaseActivity implements Response.Listener<
 
     @Override
     public void onErrorResponse(VolleyError error) {
-        Utils.showToast("注册失败，请稍后重试");
+        Utils.showToast(R.string.register_fail);
         mProgress.dismiss();
     }
 
     @Override
     public void onResponse(String response) {
-        Log.i("test", "response " + response);
         if (!TextUtils.isEmpty(response)) {
             try {
                 JSONObject jObj = new JSONObject(response);
                 final int code = jObj.optInt("code", -1);
-                /**
-                 * code for 0 stand for success else failure
-                 */
+                /** code for 0 stand for success else failure */
                 if (0 != code) {
                     final String msg = jObj.optString("msg");
                     if (!TextUtils.isEmpty(msg)) {
                         Utils.showToast(msg);
                     }
                 } else {
-                    Utils.showToast("注册成功");
+                    Utils.showToast(R.string.register_success);
                     PrefsUtil.setRegisterTime(System.currentTimeMillis());
                     JSONObject dataObj = jObj.getJSONObject("data");
                     UserInfo user = new UserInfo();
@@ -85,7 +80,7 @@ public class RegisterActivity extends BaseActivity implements Response.Listener<
             }
 
         } else {
-            Utils.showToast("注册失败，网络原因");
+            Utils.showToast(R.string.register_network_error);
         }
         mProgress.dismiss();
     }
@@ -95,40 +90,40 @@ public class RegisterActivity extends BaseActivity implements Response.Listener<
         final long currentTime = System.currentTimeMillis();
 
         if (currentTime - lastRegisterTime <= 60 * 60 * 1000L) {
-            Utils.showToast("一个小时内不能再注册");
+            Utils.showToast(R.string.register_invalid);
             return;
         }
 
         final String email = mEmailEdit.getText().toString().trim();
         if (TextUtils.isEmpty(email)) {
-            Utils.showToast("邮箱不能为空");
+            Utils.showToast(R.string.email_empty);
             return;
         }
 
         if (!emailValid(email)) {
-            Utils.showToast("邮箱不合法");
+            Utils.showToast(R.string.email_invalid);
             return;
         }
 
         final String password = mPasswordEdit.getText().toString().trim();
         if (TextUtils.isEmpty(password)) {
-            Utils.showToast("密码不能为空");
+            Utils.showToast(R.string.password_empty);
             return;
         }
 
         if (password.length() < 6 || password.length() >= 16) {
-            Utils.showToast("密码长度需要6位并且小于16位");
+            Utils.showToast(R.string.password_invalid);
             return;
         }
 
         final String nickName = mNickNameEdit.getText().toString().trim();
         if (TextUtils.isEmpty(nickName)) {
-            Utils.showToast("请输入昵称");
+            Utils.showToast(R.string.nickname_empty);
             return;
         }
 
         if (nickName.length() >= 25) {
-            Utils.showToast("昵称太长，中文请限制在12字内，英文25字母内");
+            Utils.showToast(R.string.nickname_invalid);
             return;
         }
 
@@ -138,10 +133,10 @@ public class RegisterActivity extends BaseActivity implements Response.Listener<
         params.put("nickname", nickName);
 
         mProgress = new ProgressDialog(this);
-        mProgress.setMessage("正在注册...");
+        mProgress.setMessage(getString(R.string.registering));
         mProgress.setCancelable(false);
         mProgress.show();
-        HttpUtils.post(REQUEST_URL, params, this, this);
+        HttpUtils.post("http://www.itouxian.com/json/register", params, this, this);
     }
 
     boolean emailValid(String email) {

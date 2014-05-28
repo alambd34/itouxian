@@ -5,9 +5,11 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.text.Html;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,8 +18,6 @@ import com.itouxian.android.PrefsUtil;
 import com.itouxian.android.R;
 import com.itouxian.android.model.Feed;
 import com.itouxian.android.model.FeedData;
-import com.itouxian.android.pulltorefresh.PullToRefreshBase;
-import com.itouxian.android.pulltorefresh.PullToRefreshListView;
 import com.itouxian.android.util.HttpUtils;
 import com.itouxian.android.util.IntentUtils;
 import com.itouxian.android.util.Utils;
@@ -42,12 +42,14 @@ import static com.itouxian.android.util.ConstantUtil.*;
 /**
  * Created by chenjishi on 14-5-27.
  */
-public class FeedListFragment extends Fragment implements Response.Listener<FeedData>,
-        Response.ErrorListener, PullToRefreshBase.OnRefreshListener,
-        AdapterView.OnItemClickListener, LoginDialog.OnLoginListener {
-    public static final String BUNDLE_KEY_TYPE = "type";
+public class FeedListFragment extends Fragment implements Response.Listener<FeedData>, SwipeRefreshLayout.OnRefreshListener,
+        Response.ErrorListener, AdapterView.OnItemClickListener, LoginDialog.OnLoginListener {
+    public static final String BUNDLE_KEY_TYPE = "feed_list_type";
+
     public static final int FEED_LIST_HOME = 1;
-    public static final int FEED_LIST_FAVORITE = 2;
+    public static final int FEED_LIST_NOW = 2;
+    public static final int FEED_LIST_RANDOM = 3;
+    public static final int FEED_LIST_FAVORITE = 4;
 
     private static final int LOGIN_COMMENT_CLICK = 100;
     private static final int LOGIN_VOTE_CLICK = 101;
@@ -56,16 +58,16 @@ public class FeedListFragment extends Fragment implements Response.Listener<Feed
     private static final int VOTE_DOWN = 2;
 
     private int mPage = 1;
-    private int mType;
+    private int mFeedListType;
 
-    private PullToRefreshListView mPullListView;
+    private SwipeRefreshLayout mSwipeRefreshLayout;
     private FeedListAdapter mFeedListAdapter;
     private boolean mIsPulled = false;
 
     private HashMap<Long, String> mVoteIds = new HashMap<Long, String>();
 
     private View mFootView;
-    private View mEmptyView;
+//    private View mEmptyView;
 
     private int mLoginClickType;
     private long mClickedItemId;
@@ -126,7 +128,6 @@ public class FeedListFragment extends Fragment implements Response.Listener<Feed
             sendIntent.putExtra(Intent.EXTRA_TEXT, feed.contents);
             sendIntent.setType("text/plain");
             startActivity(Intent.createChooser(sendIntent, "爱偷闲分享"));
-
         }
     };
 
@@ -158,34 +159,37 @@ public class FeedListFragment extends Fragment implements Response.Listener<Feed
         super.onCreate(savedInstanceState);
         Bundle bundle = getArguments();
         if (null != bundle) {
-            mType = bundle.getInt(BUNDLE_KEY_TYPE, FEED_LIST_HOME);
+            mFeedListType = bundle.getInt(BUNDLE_KEY_TYPE, FEED_LIST_HOME);
         }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        mPullListView = (PullToRefreshListView) inflater.inflate(R.layout.fragment_feed_list, container, false);
-        ListView listView = mPullListView.getRefreshableView();
+        View view = inflater.inflate(R.layout.fragment_feed_list, container, false);
+        mSwipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipe_refresh_layout);
+        ListView listView = (ListView) view.findViewById(R.id.list_feed);
 
         mFootView = inflater.inflate(R.layout.load_more, null);
-        mEmptyView = inflater.inflate(R.layout.empty_view, null);
+//        mEmptyView = inflater.inflate(R.layout.empty_view, null);
         Button loadBtn = (Button) mFootView.findViewById(R.id.btn_load);
         loadBtn.setOnClickListener(mLoadMoreClickListener);
 
         mFootView.setVisibility(View.GONE);
         listView.addFooterView(mFootView);
 
-        ((ViewGroup) listView.getParent()).addView(mEmptyView);
-        listView.setEmptyView(mEmptyView);
+//        ((ViewGroup) listView.getParent()).addView(mEmptyView);
+//        listView.setEmptyView(mEmptyView);
 
         mFeedListAdapter = new FeedListAdapter(getActivity());
 
         listView.setAdapter(mFeedListAdapter);
         listView.setOnItemClickListener(this);
 
-        mPullListView.setOnRefreshListener(this);
+        mSwipeRefreshLayout.setColorScheme(R.color.color1,
+                R.color.color2, R.color.color3, R.color.color4);
+        mSwipeRefreshLayout.setOnRefreshListener(this);
 
-        return mPullListView;
+        return view;
     }
 
     @Override
@@ -195,7 +199,7 @@ public class FeedListFragment extends Fragment implements Response.Listener<Feed
     }
 
     @Override
-    public void onRefresh(PullToRefreshBase refreshView) {
+    public void onRefresh() {
         mIsPulled = true;
         mPage = 1;
         loadData();
@@ -204,7 +208,7 @@ public class FeedListFragment extends Fragment implements Response.Listener<Feed
     private void setPullComplete() {
         if (mIsPulled) {
             mIsPulled = false;
-            mPullListView.onRefreshComplete();
+            mSwipeRefreshLayout.setRefreshing(false);
         }
     }
 
@@ -220,6 +224,7 @@ public class FeedListFragment extends Fragment implements Response.Listener<Feed
 
         if (null != response && null != response.data) {
             final ArrayList<Feed> feeds = response.data.data;
+            Log.i("test", "size " + feeds.size() + " type " + mFeedListType);
 
             if (null != feeds && feeds.size() > 0) {
                 if (1 == mPage) {
@@ -240,14 +245,26 @@ public class FeedListFragment extends Fragment implements Response.Listener<Feed
     }
 
     private void loadData() {
-        String url;
-        if (mType == FEED_LIST_FAVORITE) {
-            String token = PrefsUtil.getUser().token;
-            url = String.format("http://www.itouxian.com/json/get_favourite/%1$d?token=%2$s",
-                    mPage, token);
-        } else {
-            url = String.format("http://www.itouxian.com/json/index/%1$d", mPage);
+
+        String url = null;
+        switch (mFeedListType) {
+            case FEED_LIST_HOME:
+                url = String.format("http://www.itouxian.com/json/index/%1$d", mPage);
+                break;
+            case FEED_LIST_NOW:
+                url = String.format("http://www.itouxian.com/json/now/%1$d", mPage);
+                break;
+            case FEED_LIST_RANDOM:
+                url = "http://www.itouxian.com/json/random";
+                break;
+            case FEED_LIST_FAVORITE:
+                String token = PrefsUtil.getUser().token;
+                url = String.format("http://www.itouxian.com/json/get_favourite/%1$d?token=%2$s",
+                        mPage, token);
+                break;
         }
+
+        Log.i("test", "url " + url);
 
         HttpUtils.get(url, FeedData.class, this, this);
     }
