@@ -54,11 +54,11 @@
             android:layout_width="match_parent"
             android:layout_height="@dimen/action_bar_height">
         <Button
-                android:id="@+id/btn_cancel"
+                android:id="@+id/btn_register"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:text="@string/cancel"
+                android:text="@string/register"
                 android:background="@drawable/highlight_color"
                 android:gravity="center"
                 android:textSize="16sp"
@@ -67,13 +67,13 @@
               android:layout_height="match_parent"
               android:background="#9C9C9C"/>
         <Button
-                android:id="@+id/btn_confirm"
+                android:id="@+id/btn_login"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:background="@drawable/highlight_color"
                 android:gravity="center"
-                android:text="@string/confirm"
+                android:text="@string/login"
                 android:textSize="16sp"
                 android:textColor="@color/black"/>
     </LinearLayout>

@@ -26,6 +26,7 @@
 
     <item type="id" name="split_v" />
     <item type="id" name="split_h" />
+    <item type="id" name="view_pager" />
 
     <item name="content_layout" type="id"/>
 </resources>

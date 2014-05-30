@@ -1,16 +1,19 @@
 package com.itouxian.android.view;
 
+import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.Intent;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.EditText;
 import com.itouxian.android.PrefsUtil;
 import com.itouxian.android.R;
+import com.itouxian.android.activity.MainActivity;
+import com.itouxian.android.activity.RegisterActivity;
 import com.itouxian.android.model.UserInfo;
 import com.itouxian.android.util.HttpUtils;
 import com.itouxian.android.util.Utils;
@@ -37,13 +40,13 @@ public class LoginDialog extends Dialog implements View.OnClickListener, Respons
         View view = LayoutInflater.from(context).inflate(R.layout.login, null);
         setContentView(view);
 
-        view.findViewById(R.id.btn_confirm).setOnClickListener(this);
-        view.findViewById(R.id.btn_cancel).setOnClickListener(this);
+        view.findViewById(R.id.btn_register).setOnClickListener(this);
+        view.findViewById(R.id.btn_login).setOnClickListener(this);
     }
 
     @Override
     public void onClick(View v) {
-        if (R.id.btn_confirm == v.getId()) {
+        if (R.id.btn_login == v.getId()) {
             final String str1 = ((EditText) findViewById(R.id.user_name)).getText().toString().trim();
             final String str2 = ((EditText) findViewById(R.id.password)).getText().toString().trim();
 
@@ -58,7 +61,8 @@ public class LoginDialog extends Dialog implements View.OnClickListener, Respons
 
             HttpUtils.post("http://www.itouxian.com/json/login", params, this, this);
         } else {
-            dismiss();
+            Intent intent = new Intent(context, RegisterActivity.class);
+            ((Activity) context).startActivityForResult(intent, MainActivity.REQUEST_CODE_REGISTER);
         }
     }
 
@@ -70,7 +74,6 @@ public class LoginDialog extends Dialog implements View.OnClickListener, Respons
 
     @Override
     public void onResponse(String response) {
-        Log.i("test", "response " + response);
         if (!TextUtils.isEmpty(response)) {
             try {
                 JSONObject jObj = new JSONObject(response);

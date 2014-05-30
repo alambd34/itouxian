@@ -1,6 +1,8 @@
 package com.itouxian.android.activity;
 
 import android.content.Intent;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.StateListDrawable;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -39,6 +41,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener,
     public static final int REQUEST_CODE_REGISTER = 101;
     public static final int RESULT_CODE_REGISTER = 102;
 
+    public static final int TAB_BUTTON_ID = 1000;
+
     private int mLoginClickType;
 
     private TextView mTitleText;
@@ -47,7 +51,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener,
     private ImageLoader mImageLoader;
 
     private FeedPagerAdapter mPagerAdapter;
-    private RadioGroup mRadioGroup;
+    private RadioGroup mTabGroup;
     private ViewPager mViewPager;
 
     @Override
@@ -64,16 +68,47 @@ public class MainActivity extends BaseActivity implements View.OnClickListener,
 
         updateMenuList(Utils.isLogin());
 
-        mPagerAdapter = new FeedPagerAdapter(getSupportFragmentManager());
+        String[] titles = getResources().getStringArray(R.array.tab_titles);
+        LinearLayout container = (LinearLayout) findViewById(R.id.container);
 
-        mViewPager = (ViewPager) findViewById(R.id.view_pager);
+        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, dp2px(40));
+        mTabGroup = new RadioGroup(this);
+        mTabGroup.setLayoutParams(lp);
+        mTabGroup.setBackgroundColor(0xFFE5E5E5);
+        mTabGroup.setWeightSum(3.f);
+        mTabGroup.setOrientation(LinearLayout.HORIZONTAL);
+        container.addView(mTabGroup);
+
+        RadioGroup.LayoutParams layoutParams = new RadioGroup.LayoutParams(0, ViewGroup.LayoutParams.MATCH_PARENT);
+        layoutParams.weight = 1;
+        for (int i = 0; i < titles.length; i++) {
+            RadioButton button = new RadioButton(this);
+            button.setGravity(Gravity.CENTER);
+            button.setText(titles[i]);
+            button.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16);
+            button.setTextColor(0xFF333333);
+            button.setButtonDrawable(new StateListDrawable());
+            button.setBackgroundResource(R.drawable.abs__tab_indicator_ab_holo);
+            button.setLayoutParams(layoutParams);
+            button.setId(TAB_BUTTON_ID + i);
+
+            mTabGroup.addView(button);
+        }
+
+        LinearLayout.LayoutParams pagerLayoutParames = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.MATCH_PARENT);
+        mPagerAdapter = new FeedPagerAdapter(getSupportFragmentManager());
+        mViewPager = new ViewPager(this);
+        /** When using FragmentPagerAdapter the host ViewPager must have a valid ID set. */
+        mViewPager.setId(TAB_BUTTON_ID + 4);
+        mViewPager.setLayoutParams(pagerLayoutParames);
         mViewPager.setAdapter(mPagerAdapter);
         mViewPager.setCurrentItem(0);
         mViewPager.setOnPageChangeListener(this);
+        container.addView(mViewPager);
 
-        mRadioGroup = (RadioGroup) findViewById(R.id.tab_group);
-        mRadioGroup.setOnCheckedChangeListener(this);
-        mRadioGroup.check(R.id.rb_home);
+        mTabGroup.setOnCheckedChangeListener(this);
+        mTabGroup.check(TAB_BUTTON_ID);
     }
 
     private LinearLayout mMenuContainer;
@@ -97,8 +132,12 @@ public class MainActivity extends BaseActivity implements View.OnClickListener,
         mMenuContainer.addView(loginLayout);
         mMenuContainer.addView(generateDivider(), lp1);
 
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inJustDecodeBounds = true;
+        BitmapFactory.decodeResource(getResources(), R.drawable.ic_avatar_2, options);
+
         ImageView userIcon = new ImageView(this);
-        userIcon.setLayoutParams(new LinearLayout.LayoutParams(dp2px(20), dp2px(20)));
+        userIcon.setLayoutParams(new LinearLayout.LayoutParams(options.outWidth, options.outHeight));
         loginLayout.addView(userIcon);
 
         TextView loginText = generateView(R.string.login, -1, 0);
@@ -119,7 +158,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener,
 
         if (!isLogin) {
             index += 1;
-            mMenuContainer.addView(generateView(R.string.register, R.drawable.user_default, index), lp);
+            mMenuContainer.addView(generateView(R.string.register, R.drawable.ic_avatar_2, index), lp);
             mMenuContainer.addView(generateDivider(), lp1);
         }
 
@@ -145,21 +184,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener,
 
     @Override
     public void onCheckedChanged(RadioGroup group, int checkedId) {
-        int index = 0;
-        switch (checkedId) {
-            case R.id.rb_home:
-                index = 0;
-                break;
-            case R.id.rb_now:
-                index = 1;
-                break;
-            case R.id.rb_random:
-                index = 2;
-                break;
-        }
-
-
-        mViewPager.setCurrentItem(index);
+        mViewPager.setCurrentItem(checkedId - TAB_BUTTON_ID);
     }
 
     @Override
@@ -169,20 +194,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener,
 
     @Override
     public void onPageSelected(int i) {
-        int id = R.id.rb_home;
-        switch (i) {
-            case 0:
-                id = R.id.rb_home;
-                break;
-            case 1:
-                id = R.id.rb_now;
-                break;
-            case 2:
-                id = R.id.rb_random;
-                break;
-
-        }
-        mRadioGroup.check(id);
+        mTabGroup.check(TAB_BUTTON_ID + i);
     }
 
     @Override
@@ -391,6 +403,13 @@ public class MainActivity extends BaseActivity implements View.OnClickListener,
             mPlayer.release();
             mPlayer = null;
         }
+    }
+
+    @Override
+    protected void applyTheme(int theme) {
+        super.applyTheme(theme);
+
+        mPagerAdapter.notifyDataSetChanged();
     }
 
     @Override

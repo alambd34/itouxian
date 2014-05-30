@@ -16,59 +16,6 @@
             android:text="@string/app_name"
             android:textColor="@android:color/white"
             android:textSize="@dimen/action_bar_subtitle_size"/>
-    <RadioGroup
-            android:id="@+id/tab_group"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:orientation="horizontal">
-        <RadioButton
-                android:id="@+id/rb_home"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="首页"
-                android:textSize="16sp"
-                android:textColor="#333"
-                android:paddingLeft="8dp"
-                android:paddingTop="4dp"
-                android:paddingRight="8dp"
-                android:paddingBottom="4dp"
-                android:tag="0"
-                android:button="@null"
-                android:background="@drawable/tab_button_bkg"
-                />
-        <RadioButton
-                android:id="@+id/rb_now"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="此刻"
-                android:textSize="16sp"
-                android:textColor="#333"
-                android:paddingLeft="8dp"
-                android:paddingTop="4dp"
-                android:paddingRight="8dp"
-                android:paddingBottom="4dp"
-                android:tag="1"
-                android:button="@null"
-                android:background="@drawable/tab_button_bkg"
-                />
-        <RadioButton
-                android:id="@+id/rb_random"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="动态"
-                android:textSize="16sp"
-                android:textColor="#333"
-                android:paddingLeft="8dp"
-                android:paddingTop="4dp"
-                android:paddingRight="8dp"
-                android:paddingBottom="4dp"
-                android:tag="2"
-                android:button="@null"
-                android:background="@drawable/tab_button_bkg"
-                />
-
-            </RadioGroup>
     <RelativeLayout
             android:id="@+id/right_view"
             android:layout_width="wrap_content"

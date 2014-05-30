@@ -23,7 +23,6 @@
     <string name="night">夜间</string>
     <string name="day">日间</string>
 
-    <string name="register_title">注册</string>
     <string name="password_hint">6 ~ 16位密码</string>
     <string name="nick_name_hint">昵称，不超过25字，中文不超过12字</string>
     <string name="register_space">注&#160;&#160;&#160;&#160;册</string>
@@ -68,6 +67,9 @@
     <string name="net_error">网络无连接，请检查网络设置</string>
     <string name="favorite_success">收藏成功!</string>
     <string name="favorite_fail">收藏失败!</string>
+
+    <string name="pub_time">%1$s&#160;&#160;%2$s</string>
+    <string name="pub_reviews">%1$d人看过&#160;&#160;%2$d评论</string>
 
     <string name="copyright">©2007 - 2019 Www.Itouxian.Com</string>
     <string name="close_dialog">关闭窗口</string>

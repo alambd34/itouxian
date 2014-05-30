@@ -14,4 +14,9 @@
         <item>笑话</item>
         <item>童趣</item>
     </string-array>
+    <string-array name="tab_titles">
+        <item>每日推荐</item>
+        <item>此刻新鲜</item>
+        <item>随便看看</item>
+    </string-array>
 </resources>

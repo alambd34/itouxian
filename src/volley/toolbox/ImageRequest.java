@@ -16,6 +16,8 @@
 
 package volley.toolbox;
 
+import android.graphics.*;
+import android.util.Log;
 import volley.DefaultRetryPolicy;
 import volley.NetworkResponse;
 import volley.ParseError;
@@ -23,9 +25,7 @@ import volley.Request;
 import volley.Response;
 import volley.VolleyLog;
 
-import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
-import android.graphics.BitmapFactory;
 
 /**
  * A canned request for getting an image at a given URL and calling
@@ -141,6 +141,32 @@ public class ImageRequest extends Request<Bitmap> {
         if (mMaxWidth == 0 && mMaxHeight == 0) {
             decodeOptions.inPreferredConfig = mDecodeConfig;
             bitmap = BitmapFactory.decodeByteArray(data, 0, data.length, decodeOptions);
+        } else if (mMaxWidth > 0 && mMaxHeight == 0) {
+            //we need to crop the image if height exceed 1000 pixel
+
+            decodeOptions.inPreferredConfig = mDecodeConfig;
+            bitmap = BitmapFactory.decodeByteArray(data, 0, data.length, decodeOptions);
+
+            int actualWidth = bitmap.getWidth();
+            int actualHeight = bitmap.getHeight();
+
+            if (actualHeight >= 1000) {
+                actualHeight = 650;
+                bitmap = Bitmap.createBitmap(bitmap, 0, 0, actualWidth, actualHeight);
+                Canvas canvas = new Canvas(bitmap);
+                Rect rect = new Rect();
+                rect.left = 0;
+                rect.top = actualHeight - 40;
+                rect.right = actualWidth;
+                rect.bottom = actualHeight;
+                LinearGradient gradient = new LinearGradient(0, actualHeight, 0, actualHeight - 40, Color.WHITE, 0x00FFFFFF, Shader.TileMode.REPEAT);
+                Paint paint = new Paint();
+                paint.setDither(true);
+                paint.setShader(gradient);
+
+                canvas.drawRect(rect, paint);
+
+            }
         } else {
             // If we have to resize this image, first get the natural bounds.
             decodeOptions.inJustDecodeBounds = true;

@@ -2,6 +2,7 @@ package com.itouxian.android.activity;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -18,6 +19,7 @@ import com.itouxian.android.PrefsUtil;
 import com.itouxian.android.R;
 import com.itouxian.android.model.Feed;
 import com.itouxian.android.model.FeedData;
+import com.itouxian.android.util.Constants;
 import com.itouxian.android.util.HttpUtils;
 import com.itouxian.android.util.IntentUtils;
 import com.itouxian.android.util.Utils;
@@ -38,6 +40,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static com.itouxian.android.util.ConstantUtil.*;
+import static com.itouxian.android.util.Constants.KEY_FEED_LIST;
+import static com.itouxian.android.util.Constants.KEY_FEED_INDEX;
+import static com.itouxian.android.util.Constants.MODE_NIGHT;
 
 /**
  * Created by chenjishi on 14-5-27.
@@ -62,7 +67,6 @@ public class FeedListFragment extends Fragment implements Response.Listener<Feed
 
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private FeedListAdapter mFeedListAdapter;
-    private boolean mIsPulled = false;
 
     private HashMap<Long, String> mVoteIds = new HashMap<Long, String>();
 
@@ -195,21 +199,23 @@ public class FeedListFragment extends Fragment implements Response.Listener<Feed
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        mSwipeRefreshLayout.setRefreshing(true);
         loadData();
     }
 
     @Override
     public void onRefresh() {
-        mIsPulled = true;
         mPage = 1;
         loadData();
     }
 
     private void setPullComplete() {
-        if (mIsPulled) {
-            mIsPulled = false;
-            mSwipeRefreshLayout.setRefreshing(false);
-        }
+        mSwipeRefreshLayout.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                mSwipeRefreshLayout.setRefreshing(false);
+            }
+        }, 200);
     }
 
     @Override
@@ -224,7 +230,6 @@ public class FeedListFragment extends Fragment implements Response.Listener<Feed
 
         if (null != response && null != response.data) {
             final ArrayList<Feed> feeds = response.data.data;
-            Log.i("test", "size " + feeds.size() + " type " + mFeedListType);
 
             if (null != feeds && feeds.size() > 0) {
                 if (1 == mPage) {
@@ -271,8 +276,9 @@ public class FeedListFragment extends Fragment implements Response.Listener<Feed
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        Intent intent = new Intent(getActivity(), DetailActivity.class);
-        intent.putExtra("feed", mFeedList.get(position - 1));
+        Intent intent = new Intent(getActivity(), DetailsActivity.class);
+        intent.putExtra(KEY_FEED_LIST, mFeedList);
+        intent.putExtra(KEY_FEED_INDEX, position);
         startActivity(intent);
     }
 
@@ -365,12 +371,18 @@ public class FeedListFragment extends Fragment implements Response.Listener<Feed
         private int mImageWidth;
         private RelativeLayout.LayoutParams mLayoutParams;
 
+        private Resources mRes;
+        private int mPadding;
+
         public FeedListAdapter(Context context) {
             mContext = context;
             mInflater = LayoutInflater.from(context);
             mImageLoader = HttpUtils.getImageLoader();
             mFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             mDate = new Date(System.currentTimeMillis());
+
+            mRes = getResources();
+            mPadding = (int) (mRes.getDisplayMetrics().density * 8);
 
             mContentPattern = Pattern.compile("<p>(.*?)</p>");
             mContentMatcher = mContentPattern.matcher("");
@@ -444,10 +456,12 @@ public class FeedListFragment extends Fragment implements Response.Listener<Feed
         public View getView(int position, View convertView, ViewGroup parent) {
             ViewHolder holder;
 
+            final int theme = PrefsUtil.getThemeMode();
             if (null == convertView) {
                 convertView = mInflater.inflate(R.layout.list_item_feed, parent, false);
                 holder = new ViewHolder();
 
+                holder.mContainer = (RelativeLayout) convertView.findViewById(R.id.item_container);
                 holder.contentBox = (RelativeLayout) convertView.findViewById(R.id.content_box);
                 holder.avatarView = (ImageView) convertView.findViewById(R.id.avatar);
                 holder.shareButton = (ImageButton) convertView.findViewById(R.id.share_content);
@@ -459,6 +473,24 @@ public class FeedListFragment extends Fragment implements Response.Listener<Feed
                 holder.upText = (TextView) convertView.findViewById(R.id.up_count);
                 holder.downText = (TextView) convertView.findViewById(R.id.down_count);
                 holder.commentText = (TextView) convertView.findViewById(R.id.comment_count);
+
+                if (MODE_NIGHT == theme) {
+                    holder.nameText.setTextColor(mRes.getColor(R.color.text_color_summary));
+                    holder.timeText.setTextColor(mRes.getColor(R.color.text_color_summary));
+                    holder.titleText.setTextColor(mRes.getColor(R.color.text_color_weak));
+                    holder.contentText.setTextColor(mRes.getColor(R.color.text_color_weak));
+                    holder.upText.setTextColor(mRes.getColor(R.color.text_color_summary));
+                    holder.downText.setTextColor(mRes.getColor(R.color.text_color_summary));
+                    holder.commentText.setTextColor(mRes.getColor(R.color.text_color_summary));
+                } else {
+                    holder.nameText.setTextColor(mRes.getColor(R.color.text_color_weak));
+                    holder.timeText.setTextColor(mRes.getColor(R.color.text_color_weak));
+                    holder.titleText.setTextColor(mRes.getColor(R.color.text_color_regular));
+                    holder.contentText.setTextColor(mRes.getColor(R.color.text_color_regular));
+                    holder.upText.setTextColor(mRes.getColor(R.color.text_color_weak));
+                    holder.downText.setTextColor(mRes.getColor(R.color.text_color_weak));
+                    holder.commentText.setTextColor(mRes.getColor(R.color.text_color_weak));
+                }
 
                 final int itemType = getItemViewType(position);
                 if (itemType == FEED_SINGLE_IMAGE) {
@@ -477,6 +509,10 @@ public class FeedListFragment extends Fragment implements Response.Listener<Feed
             }
 
             holder = (ViewHolder) convertView.getTag();
+
+            holder.mContainer.setBackgroundResource(theme == MODE_NIGHT ? R.drawable.card_bkg_night :
+                    R.drawable.card_bkg);
+            holder.mContainer.setPadding(mPadding, mPadding, mPadding, mPadding);
 
             final Feed feed = getItem(position);
 
@@ -541,31 +577,18 @@ public class FeedListFragment extends Fragment implements Response.Listener<Feed
                                 int w = bitmap.getWidth();
                                 int h = bitmap.getHeight();
 
-                                Bitmap cropedBitmap = null;
-                                if (h >= 1000) {
-                                    h = 650;
-                                    cropedBitmap = Bitmap.createBitmap(bitmap, 0, 0, w, h);
-                                }
-
-                                int requestHeight = mImageWidth * h / w;
-                                RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(mImageWidth, requestHeight);
+                                int desiredHeight = mImageWidth * h / w;
+                                RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(mImageWidth, desiredHeight);
                                 feedImageView.setLayoutParams(lp);
-
-                                if (null != cropedBitmap) {
-                                    feedImageView.setImageBitmap(cropedBitmap);
-                                } else {
-                                    feedImageView.setImageBitmap(bitmap);
-                                }
-                            } else {
-                                feedImageView.setImageResource(R.drawable.icon);
+                                feedImageView.setImageBitmap(bitmap);
                             }
                         }
 
                         @Override
                         public void onErrorResponse(VolleyError error) {
-                            feedImageView.setImageResource(R.drawable.icon);
+
                         }
-                    });
+                    }, mImageWidth, 0);
                 }
             } else {
                 String content = feed.contents;
@@ -591,6 +614,7 @@ public class FeedListFragment extends Fragment implements Response.Listener<Feed
     }
 
     private static class ViewHolder {
+        public RelativeLayout mContainer;
         public RelativeLayout contentBox;
         public ImageView avatarView;
         public ImageButton shareButton;

@@ -143,6 +143,9 @@ public class BaseActivity extends FragmentActivity {
     }
 
     protected void applyTheme(int theme) {
+        mRootView.setBackgroundColor(getResources().getColor(MODE_NIGHT == PrefsUtil.getThemeMode()
+                ? R.color.background_night : R.color.background));
+
         if (!mHideTitle && mTitleResId == -1) {
             final RelativeLayout titleView = (RelativeLayout) findViewById(R.id.title_bar);
             final TextView titleText = (TextView) findViewById(R.id.title_text);

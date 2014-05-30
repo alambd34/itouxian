@@ -35,7 +35,7 @@ public class RegisterActivity extends BaseActivity implements Response.Listener<
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
-        setTitle(R.string.register_title);
+        setTitle(R.string.register);
 
         mEmailEdit = (EditText) findViewById(R.id.edit_email);
         mPasswordEdit = (EditText) findViewById(R.id.edit_pwd);
