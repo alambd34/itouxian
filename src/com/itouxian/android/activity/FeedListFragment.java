@@ -6,6 +6,7 @@ import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.ViewPager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.text.Html;
 import android.text.TextUtils;
@@ -14,16 +15,17 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewParent;
 import android.widget.*;
 import com.itouxian.android.PrefsUtil;
 import com.itouxian.android.R;
 import com.itouxian.android.model.Feed;
 import com.itouxian.android.model.FeedData;
-import com.itouxian.android.util.Constants;
 import com.itouxian.android.util.HttpUtils;
 import com.itouxian.android.util.IntentUtils;
 import com.itouxian.android.util.Utils;
 import com.itouxian.android.view.GifMovieView;
+import com.itouxian.android.view.LoadingView;
 import com.itouxian.android.view.LoginDialog;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -40,8 +42,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static com.itouxian.android.util.ConstantUtil.*;
-import static com.itouxian.android.util.Constants.KEY_FEED_LIST;
-import static com.itouxian.android.util.Constants.KEY_FEED_INDEX;
+import static com.itouxian.android.util.Constants.*;
 import static com.itouxian.android.util.Constants.MODE_NIGHT;
 
 /**
@@ -70,8 +71,9 @@ public class FeedListFragment extends Fragment implements Response.Listener<Feed
 
     private HashMap<Long, String> mVoteIds = new HashMap<Long, String>();
 
+    private FrameLayout mContainer;
+    private LoadingView mLoadingView;
     private View mFootView;
-//    private View mEmptyView;
 
     private int mLoginClickType;
     private long mClickedItemId;
@@ -170,19 +172,18 @@ public class FeedListFragment extends Fragment implements Response.Listener<Feed
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_feed_list, container, false);
+
+        mContainer = (FrameLayout) view.findViewById(R.id.container);
+
         mSwipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipe_refresh_layout);
         ListView listView = (ListView) view.findViewById(R.id.list_feed);
 
         mFootView = inflater.inflate(R.layout.load_more, null);
-//        mEmptyView = inflater.inflate(R.layout.empty_view, null);
         Button loadBtn = (Button) mFootView.findViewById(R.id.btn_load);
         loadBtn.setOnClickListener(mLoadMoreClickListener);
 
         mFootView.setVisibility(View.GONE);
         listView.addFooterView(mFootView);
-
-//        ((ViewGroup) listView.getParent()).addView(mEmptyView);
-//        listView.setEmptyView(mEmptyView);
 
         mFeedListAdapter = new FeedListAdapter(getActivity());
 
@@ -200,7 +201,24 @@ public class FeedListFragment extends Fragment implements Response.Listener<Feed
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         mSwipeRefreshLayout.setRefreshing(true);
+        showLoadingView();
         loadData();
+    }
+
+    private void showLoadingView() {
+        if (null == mLoadingView) {
+            mLoadingView = new LoadingView(getActivity());
+        }
+
+        ViewParent parent = mLoadingView.getParent();
+        if (null != parent) ((FrameLayout) parent).removeView(mLoadingView);
+
+        mContainer.addView(mLoadingView, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.MATCH_PARENT));
+    }
+
+    private void hideLoadingView() {
+        mContainer.removeView(mLoadingView);
     }
 
     @Override
@@ -222,6 +240,14 @@ public class FeedListFragment extends Fragment implements Response.Listener<Feed
     public void onErrorResponse(VolleyError error) {
         setPullComplete();
         mFootView.setVisibility(View.GONE);
+
+        int resId;
+        if (!Utils.didNetworkConnected(getActivity())) {
+            resId = R.string.net_error;
+        } else {
+            resId = R.string.server_error;
+        }
+        mLoadingView.setErrorTips(getString(resId));
     }
 
     @Override
@@ -244,13 +270,14 @@ public class FeedListFragment extends Fragment implements Response.Listener<Feed
             } else {
                 mFootView.setVisibility(View.GONE);
             }
+            hideLoadingView();
         } else {
             mFootView.setVisibility(View.GONE);
+            mLoadingView.setErrorTips(getString(R.string.server_error));
         }
     }
 
     private void loadData() {
-
         String url = null;
         switch (mFeedListType) {
             case FEED_LIST_HOME:
@@ -268,8 +295,6 @@ public class FeedListFragment extends Fragment implements Response.Listener<Feed
                         mPage, token);
                 break;
         }
-
-        Log.i("test", "url " + url);
 
         HttpUtils.get(url, FeedData.class, this, this);
     }
@@ -369,7 +394,6 @@ public class FeedListFragment extends Fragment implements Response.Listener<Feed
         private Pattern mContentPattern;
         private Matcher mContentMatcher;
         private int mImageWidth;
-        private RelativeLayout.LayoutParams mLayoutParams;
 
         private Resources mRes;
         private int mPadding;
@@ -394,8 +418,6 @@ public class FeedListFragment extends Fragment implements Response.Listener<Feed
             int width = metrics.widthPixels;
             float density = metrics.density;
             mImageWidth = width - (int) ((12 * 2 + 8 * 2) * density + .5f);
-
-            mLayoutParams = new RelativeLayout.LayoutParams(mImageWidth, ViewGroup.LayoutParams.WRAP_CONTENT);
         }
 
         @Override

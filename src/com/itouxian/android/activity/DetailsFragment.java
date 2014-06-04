@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,6 +21,7 @@ import com.itouxian.android.util.Utils;
 
 import java.text.Format;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 
 import static com.itouxian.android.util.Constants.BUNDLE_KEY_FEED;
@@ -39,7 +41,6 @@ public class DetailsFragment extends Fragment implements JSCallback {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         Bundle bundle = getArguments();
         mFeed = bundle.getParcelable(BUNDLE_KEY_FEED);
         mJsBridge = new JavaScriptBridge(this);
@@ -99,8 +100,12 @@ public class DetailsFragment extends Fragment implements JSCallback {
 
     @Override
     public void onImageClicked(String url) {
+        ArrayList<String> list = new ArrayList<String>();
+        list.add(url);
+
         Intent intent = new Intent(getActivity(), PhotoViewActivity.class);
         intent.putExtra("imgsrc", url);
+        intent.putStringArrayListExtra("images", list);
         startActivity(intent);
     }
 

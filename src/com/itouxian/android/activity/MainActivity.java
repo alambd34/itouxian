@@ -27,6 +27,7 @@ import com.itouxian.android.view.AboutDialog;
 import com.itouxian.android.view.ExitDialog;
 import com.itouxian.android.view.FireworksView;
 import com.itouxian.android.view.LoginDialog;
+import net.youmi.android.spot.SpotManager;
 import volley.toolbox.ImageLoader;
 
 import static com.itouxian.android.activity.FeedListFragment.*;
@@ -104,11 +105,20 @@ public class MainActivity extends BaseActivity implements View.OnClickListener,
         mViewPager.setLayoutParams(pagerLayoutParames);
         mViewPager.setAdapter(mPagerAdapter);
         mViewPager.setCurrentItem(0);
+        mViewPager.setOffscreenPageLimit(2);
         mViewPager.setOnPageChangeListener(this);
         container.addView(mViewPager);
 
         mTabGroup.setOnCheckedChangeListener(this);
         mTabGroup.check(TAB_BUTTON_ID);
+
+        mTitleText.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                SpotManager.getInstance(MainActivity.this).showSpotAds(MainActivity.this);
+
+            }
+        }, 10000);
     }
 
     private LinearLayout mMenuContainer;
@@ -336,6 +346,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener,
                 themeIntent.putExtra(Constants.KEY_THEME_MODE, mode);
                 PrefsUtil.setThemeMode(mode);
                 sendBroadcast(themeIntent);
+                mPagerAdapter.notifyDataSetChanged();
                 break;
             case 5:
                 if (Utils.isLogin()) {
@@ -398,6 +409,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener,
 
     @Override
     protected void onDestroy() {
+        SpotManager.getInstance(this).unregisterSceenReceiver();
         super.onDestroy();
         if (null != mPlayer) {
             mPlayer.release();
@@ -408,8 +420,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener,
     @Override
     protected void applyTheme(int theme) {
         super.applyTheme(theme);
-
-        mPagerAdapter.notifyDataSetChanged();
     }
 
     @Override

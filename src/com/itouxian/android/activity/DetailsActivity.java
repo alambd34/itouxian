@@ -40,7 +40,6 @@ public class DetailsActivity extends BaseActivity implements ViewPager.OnPageCha
         mViewPager.setAdapter(mPagerAdapter);
         mViewPager.setOnPageChangeListener(this);
         mViewPager.setCurrentItem(mCurrentIndex);
-        mViewPager.setOffscreenPageLimit(5);
         mViewPager.setPageMarginDrawable(R.drawable.sliding_back_shadow);
         mViewPager.setPageMargin(dp2px(8));
         mViewPager.setPageTransformer(true, new DepthPageTransformer());

@@ -65,8 +65,12 @@
     <string name="comment_submitting">评论提交中...</string>
     <string name="reply">回复:%1$s</string>
     <string name="net_error">网络无连接，请检查网络设置</string>
+    <string name="server_error">抱了个歉，服务器今天完全不在状态啊！</string>
     <string name="favorite_success">收藏成功!</string>
     <string name="favorite_fail">收藏失败!</string>
+    <string name="picture_loading">图像加载中...</string>
+    <string name="image_save_success">已保存至相册</string>
+    <string name="image_save_fail">下载失败,请重试...</string>
 
     <string name="pub_time">%1$s&#160;&#160;%2$s</string>
     <string name="pub_reviews">%1$d人看过&#160;&#160;%2$d评论</string>
