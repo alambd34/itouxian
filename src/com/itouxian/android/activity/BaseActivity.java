@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.res.Resources;
 import android.support.v4.app.FragmentActivity;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -40,8 +41,6 @@ public class BaseActivity extends FragmentActivity {
         mInflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
         mRootView = (FrameLayout) findViewById(android.R.id.content);
-        mRootView.setBackgroundColor(getResources().getColor(MODE_NIGHT == PrefsUtil.getThemeMode()
-                ? R.color.background_night : R.color.background));
 
         if (!mHideTitle) {
             final int resId = -1 == mTitleResId ? R.layout.base_title_layout : mTitleResId;
@@ -143,25 +142,31 @@ public class BaseActivity extends FragmentActivity {
     }
 
     protected void applyTheme(int theme) {
-        mRootView.setBackgroundColor(getResources().getColor(MODE_NIGHT == PrefsUtil.getThemeMode()
+        Resources res = getResources();
+
+        mRootView.setBackgroundColor(res.getColor(MODE_NIGHT == theme
                 ? R.color.background_night : R.color.background));
 
-        if (!mHideTitle && mTitleResId == -1) {
+        if (!mHideTitle) {
             final RelativeLayout titleView = (RelativeLayout) findViewById(R.id.title_bar);
             final TextView titleText = (TextView) findViewById(R.id.title_text);
             final View divider = findViewById(R.id.split_h);
             final ImageView backBtn = (ImageView) findViewById(R.id.ic_arrow);
 
-            if (Constants.MODE_NIGHT == mTheme) {
+            if (MODE_NIGHT == mTheme) {
                 titleView.setBackgroundColor(0xFF1C1C1C);
-                titleText.setTextColor(0xFF999999);
+                titleText.setTextColor(res.getColor(R.color.white));
                 divider.setBackgroundColor(0xFF303030);
-                backBtn.setImageResource(R.drawable.ic_back_night);
+                if (null != backBtn) {
+                    backBtn.setImageResource(R.drawable.ic_back_night);
+                }
             } else {
-                titleView.setBackgroundColor(0xFFE5E5E5);
-                titleText.setTextColor(0xFF666666);
+                titleView.setBackgroundColor(res.getColor(R.color.action_bar_color));
+                titleText.setTextColor(res.getColor(R.color.white));
                 divider.setBackgroundColor(0xFFCACACA);
-                backBtn.setImageResource(R.drawable.ic_back);
+                if (null != backBtn) {
+                    backBtn.setImageResource(R.drawable.ic_back);
+                }
             }
         }
     }

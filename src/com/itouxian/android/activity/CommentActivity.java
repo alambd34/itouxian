@@ -256,12 +256,12 @@ public class CommentActivity extends BaseActivity implements Response.Listener<C
                 holder.splitLine = convertView.findViewById(R.id.split_v);
 
                 if (Constants.MODE_NIGHT == mTheme) {
-                    holder.userText.setTextColor(getResources().getColor(R.color.action_bar_bg_night));
+                    holder.userText.setTextColor(getResources().getColor(R.color.action_bar_color));
                     holder.contentText.setTextColor(getResources().getColor(R.color.text_color_weak));
                     holder.replyText.setTextColor(getResources().getColor(R.color.text_color_summary));
                     holder.splitLine.setBackgroundColor(getResources().getColor(R.color.text_color_summary));
                 } else {
-                    holder.userText.setTextColor(getResources().getColor(R.color.action_bar_bg));
+                    holder.userText.setTextColor(getResources().getColor(R.color.action_bar_color));
                     holder.contentText.setTextColor(getResources().getColor(R.color.text_color_regular));
                     holder.replyText.setTextColor(getResources().getColor(R.color.text_color_weak));
                     holder.splitLine.setBackgroundColor(0xFFCACACA);

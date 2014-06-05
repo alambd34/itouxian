@@ -1,5 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <style name="ActionBarButtonStyle">
+        <item name="android:layout_width">48dp</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:background">@drawable/home_up_bg</item>
+        <item name="android:contentDescription">@null</item>
+        <item name="android:clickable">true</item>
+    </style>
     <style name="ActivityTransitions" parent="@android:style/Animation">
         <item name="android:activityOpenEnterAnimation">@anim/slide_in_left</item>
         <item name="android:activityOpenExitAnimation">@anim/fade_back</item>

@@ -34,7 +34,7 @@
                 android:layout_toLeftOf="@id/btn_send"
                 android:layout_marginTop="4dp"
                 android:layout_marginBottom="4dp"
-                android:background="@drawable/edit_text_holo_light"
+                android:background="@drawable/apptheme_edit_text_holo_light"
                 android:textSize="18sp"
                 android:textColor="@color/text_color_regular"
                 android:maxLength="1000"

@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.Rect;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -99,6 +100,8 @@ public class PhotoViewActivity extends Activity implements ViewPager.OnPageChang
     private float mDownX;
     private float mDownY;
     private boolean isOnClick;
+    private Rect mRect = new Rect();
+    private int[] mLocation = new int[2];
 
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
@@ -107,6 +110,18 @@ public class PhotoViewActivity extends Activity implements ViewPager.OnPageChang
                 mDownX = ev.getX();
                 mDownY = ev.getY();
                 isOnClick = true;
+
+                mToolBar.getLocationOnScreen(mLocation);
+                mRect.left = mLocation[0];
+                mRect.top = mLocation[1];
+                mRect.right = mLocation[0] + mToolBar.getWidth();
+                mRect.bottom = mLocation[1] + mToolBar.getHeight();
+
+                if (mRect.contains((int) mDownX, (int) mDownY)) {
+                    isOnClick = false;
+                    return super.dispatchTouchEvent(ev);
+                }
+
                 break;
             case MotionEvent.ACTION_CANCEL:
             case MotionEvent.ACTION_UP:
@@ -141,6 +156,10 @@ public class PhotoViewActivity extends Activity implements ViewPager.OnPageChang
     }
 
     public void onShareButtonClicked(View v) {
+        String url = mImageList.get(mCurrentIndex);
+        if (TextUtils.isEmpty(url)) return;
+
+        Utils.shareImage(this, url);
     }
 
     private void onTapUp() {

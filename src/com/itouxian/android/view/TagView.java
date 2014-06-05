@@ -87,11 +87,11 @@ public class TagView extends TextView {
 
         mPaint.setColor(mSelected ? FILL_COLOR_SELECT : FILL_COLOR_NORMAL);
         mPath.reset();
-        mPath.moveTo(3, 3);
-        mPath.lineTo(w - 3, 3);
-        mPath.lineTo(w - 3, y - 3);
-        mPath.lineTo(x - 3, h - 3);
-        mPath.lineTo(3, h - 3);
+        mPath.moveTo(2, 2);
+        mPath.lineTo(w - 2, 2);
+        mPath.lineTo(w - 2, y - 2);
+        mPath.lineTo(x - 2, h - 2);
+        mPath.lineTo(2, h - 2);
         mPath.close();
         canvas.drawPath(mPath, mPaint);
 

@@ -72,17 +72,23 @@ public class MainActivity extends BaseActivity implements View.OnClickListener,
         String[] titles = getResources().getStringArray(R.array.tab_titles);
         LinearLayout container = (LinearLayout) findViewById(R.id.container);
 
-        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, dp2px(40));
+        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, dp2px(36));
         mTabGroup = new RadioGroup(this);
         mTabGroup.setLayoutParams(lp);
         mTabGroup.setBackgroundColor(0xFFE5E5E5);
         mTabGroup.setWeightSum(3.f);
         mTabGroup.setOrientation(LinearLayout.HORIZONTAL);
+        mTabGroup.setPadding(dp2px(8), 0, dp2px(8), 0);
         container.addView(mTabGroup);
 
-        RadioGroup.LayoutParams layoutParams = new RadioGroup.LayoutParams(0, ViewGroup.LayoutParams.MATCH_PARENT);
-        layoutParams.weight = 1;
-        for (int i = 0; i < titles.length; i++) {
+        int len = titles.length;
+        for (int i = 0; i < len; i++) {
+            RadioGroup.LayoutParams layoutParams = new RadioGroup.LayoutParams(0, ViewGroup.LayoutParams.MATCH_PARENT);
+            layoutParams.weight = 1;
+            if (i < len - 1) {
+                layoutParams.setMargins(0, 0, dp2px(8), 0);
+            }
+
             RadioButton button = new RadioButton(this);
             button.setGravity(Gravity.CENTER);
             button.setText(titles[i]);
@@ -95,6 +101,11 @@ public class MainActivity extends BaseActivity implements View.OnClickListener,
 
             mTabGroup.addView(button);
         }
+
+        View divider = new View(this);
+        divider.setBackgroundColor(0xFFCCCCCC);
+        divider.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 1));
+        container.addView(divider);
 
         LinearLayout.LayoutParams pagerLayoutParames = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.MATCH_PARENT);
@@ -118,7 +129,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener,
                 SpotManager.getInstance(MainActivity.this).showSpotAds(MainActivity.this);
 
             }
-        }, 10000);
+        }, 5000);
     }
 
     private LinearLayout mMenuContainer;
@@ -388,6 +399,10 @@ public class MainActivity extends BaseActivity implements View.OnClickListener,
 
     @Override
     public void onBackPressed() {
+        if (SpotManager.getInstance(this).disMiss()) {
+            return;
+        }
+
         if (mDrawerLayout.isDrawerOpen(Gravity.LEFT)) {
             mDrawerLayout.closeDrawer(Gravity.LEFT);
         } else {
@@ -405,6 +420,12 @@ public class MainActivity extends BaseActivity implements View.OnClickListener,
                 }
             }
         }
+    }
+
+    @Override
+    protected void onStop() {
+        SpotManager.getInstance(this).disMiss();
+        super.onStop();
     }
 
     @Override

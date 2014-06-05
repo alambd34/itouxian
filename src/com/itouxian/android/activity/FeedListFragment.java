@@ -6,12 +6,10 @@ import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.view.ViewPager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.text.Html;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -129,11 +127,20 @@ public class FeedListFragment extends Fragment implements Response.Listener<Feed
             int position = (Integer) v.getTag();
             Feed feed = mFeedList.get(position);
 
-            Intent sendIntent = new Intent();
-            sendIntent.setAction(Intent.ACTION_SEND);
-            sendIntent.putExtra(Intent.EXTRA_TEXT, feed.contents);
-            sendIntent.setType("text/plain");
-            startActivity(Intent.createChooser(sendIntent, "爱偷闲分享"));
+            String imageUrl = feed.imageUrl;
+            if (!TextUtils.isEmpty(imageUrl)) {
+                Utils.shareImage(getActivity(), imageUrl);
+            } else {
+                String content = feed.contents;
+                content = content.replaceAll("<p>|<\\/p>|&(.*?);", "");
+                content += " - 来自爱偷闲 iTouxian.Com";
+
+                Intent sendIntent = new Intent();
+                sendIntent.setAction(Intent.ACTION_SEND);
+                sendIntent.putExtra(Intent.EXTRA_TEXT, content);
+                sendIntent.setType("text/plain");
+                startActivity(Intent.createChooser(sendIntent, getString(R.string.share_from)));
+            }
         }
     };
 
@@ -514,17 +521,20 @@ public class FeedListFragment extends Fragment implements Response.Listener<Feed
                     holder.commentText.setTextColor(mRes.getColor(R.color.text_color_weak));
                 }
 
+                holder.contentBox.setPadding(0, 0, 0, 0);
                 final int itemType = getItemViewType(position);
                 if (itemType == FEED_SINGLE_IMAGE) {
                     holder.imageView = new ImageView(mContext);
                     holder.imageView.setId(R.id.feed_image);
                     holder.contentBox.addView(holder.imageView);
+                    holder.contentBox.setPadding(0, 0, 0, mPadding + mPadding / 2);
                 }
 
                 if (itemType == FEED_IMAGE_GIF) {
                     holder.gifMovieView = new GifMovieView(mContext);
                     holder.gifMovieView.setId(R.id.feed_image);
                     holder.contentBox.addView(holder.gifMovieView);
+                    holder.contentBox.setPadding(0, 0, 0, mPadding + mPadding / 2);
                 }
 
                 convertView.setTag(holder);
@@ -550,6 +560,7 @@ public class FeedListFragment extends Fragment implements Response.Listener<Feed
             final String title = feed.title;
             if (!TextUtils.isEmpty(title)) {
                 holder.titleText.setText(title);
+                holder.titleText.getPaint().setFakeBoldText(true);
                 holder.titleText.setVisibility(View.VISIBLE);
             } else {
                 holder.titleText.setVisibility(View.GONE);
@@ -578,8 +589,8 @@ public class FeedListFragment extends Fragment implements Response.Listener<Feed
                 String contents = sb.toString();
 
                 if (!TextUtils.isEmpty(contents)) {
-                    if (contents.length() >= 140) {
-                        contents = contents.substring(0, 139);
+                    if (contents.length() >= 300) {
+                        contents = contents.substring(0, 299);
                     }
                     holder.contentText.setText(Html.fromHtml(contents));
                     holder.contentText.setVisibility(View.VISIBLE);
@@ -591,6 +602,7 @@ public class FeedListFragment extends Fragment implements Response.Listener<Feed
                     holder.gifMovieView.setImageUrl(feed.imageUrl, mImageWidth);
                 } else {
                     final ImageView feedImageView = holder.imageView;
+                    feedImageView.setImageResource(android.R.color.transparent);
                     mImageLoader.get(feed.imageUrl, new ImageLoader.ImageListener() {
                         @Override
                         public void onResponse(ImageLoader.ImageContainer response, boolean isImmediate) {
@@ -615,8 +627,8 @@ public class FeedListFragment extends Fragment implements Response.Listener<Feed
             } else {
                 String content = feed.contents;
                 if (!TextUtils.isEmpty(content)) {
-                    if (content.length() >= 140) {
-                        content = content.substring(0, 139);
+                    if (content.length() >= 300) {
+                        content = content.substring(0, 299);
                     }
                 }
                 holder.contentText.setText(Html.fromHtml(content));

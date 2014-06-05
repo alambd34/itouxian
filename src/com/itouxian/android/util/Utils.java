@@ -1,6 +1,7 @@
 package com.itouxian.android.util;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -8,6 +9,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Message;
@@ -16,12 +18,13 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.itouxian.android.App;
+import com.itouxian.android.FileCache;
 import com.itouxian.android.PrefsUtil;
 import com.itouxian.android.R;
+import volley.VolleyError;
+import volley.toolbox.ImageLoader;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -116,6 +119,61 @@ public class Utils {
             if (null != info) return info.isConnected();
         }
         return false;
+    }
+
+    public static void shareText(Context context, String content) {
+        content = content.replaceAll("<p>|<\\/p>|&(.*?);", "");
+        content += " - 来自爱偷闲 iTouxian.Com";
+
+        Intent sendIntent = new Intent();
+        sendIntent.setAction(Intent.ACTION_SEND);
+        sendIntent.putExtra(Intent.EXTRA_TEXT, content);
+        sendIntent.setType("text/plain");
+        context.startActivity(Intent.createChooser(sendIntent,
+                context.getString(R.string.share_from)));
+    }
+
+    public static void shareImage(final Context context, String url) {
+        HttpUtils.getImageLoader().get(url, new ImageLoader.ImageListener() {
+            @Override
+            public void onResponse(ImageLoader.ImageContainer response, boolean isImmediate) {
+                Bitmap bitmap = response.getBitmap();
+                if (null != bitmap) {
+                    String path = FileCache.getTempCacheDir();
+                    if (!new File(path).exists()) FileCache.mkDirs(path);
+
+                    try {
+                        File file = new File(path, "temp");
+                        file.createNewFile();
+
+                        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+                        bitmap.compress(Bitmap.CompressFormat.PNG, 100, bos);
+
+                        byte[] data = bos.toByteArray();
+                        FileOutputStream fos = new FileOutputStream(file);
+                        fos.write(data);
+                        fos.close();
+
+                        Uri uri = Uri.fromFile(file);
+
+                        Intent intent = new Intent();
+                        intent.setAction(Intent.ACTION_SEND);
+                        intent.putExtra(Intent.EXTRA_STREAM, uri);
+
+                        intent.setType("image/*");
+                        context.startActivity(Intent.createChooser(intent,
+                                context.getString(R.string.share_from)));
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+            }
+        });
     }
 
     public static synchronized boolean isWifiConnected(Context context) {
