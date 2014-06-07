@@ -3,7 +3,6 @@ package com.itouxian.android.activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.*;
-import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;

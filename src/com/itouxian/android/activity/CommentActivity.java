@@ -5,7 +5,6 @@ import android.content.Context;
 import android.os.Bundle;
 import android.text.Html;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -34,6 +33,8 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static com.itouxian.android.util.Constants.URL_COMMENTS;
+import static com.itouxian.android.util.Constants.URL_COMMENTS_GET;
 import static com.itouxian.android.util.IntentUtils.KEY_FEED_ID;
 
 /**
@@ -97,9 +98,7 @@ public class CommentActivity extends BaseActivity implements Response.Listener<C
     }
 
     private void loadData() {
-        final String url = String.format("http://www.itouxian.com/json/get_comment/%1$d/%2$d?token=%3$s",
-                mFeedId, mPage, mToken);
-        Log.i("test", "url " + url);
+        final String url = String.format(URL_COMMENTS_GET, mFeedId, mPage, mToken);
         HttpUtils.get(url, CommentData.class, this, this);
     }
 
@@ -135,7 +134,6 @@ public class CommentActivity extends BaseActivity implements Response.Listener<C
     private void sendComment(final String content) {
         if (content.equals(mContent)) return;
 
-        final String url = "http://www.itouxian.com/json/comment";
         final ProgressDialog pd = new ProgressDialog(this);
         pd.setMessage(getString(R.string.comment_submitting));
         pd.show();
@@ -146,7 +144,7 @@ public class CommentActivity extends BaseActivity implements Response.Listener<C
         params.put("content", getString(R.string.comment_from, content));
         params.put("review_id", String.valueOf(mReplyId));
 
-        HttpUtils.post(url, params, new Response.Listener<String>() {
+        HttpUtils.post(URL_COMMENTS, params, new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
                         pd.dismiss();
@@ -281,7 +279,6 @@ public class CommentActivity extends BaseActivity implements Response.Listener<C
 
             mImageLoader.get(user.icon, ImageLoader.getImageListener(holder.avatarImage,
                     R.drawable.user_default, R.drawable.user_default));
-
             String formattedString = user.nickname + " " + (Constants.MODE_NIGHT == mTheme
                     ? "<font color='#666666'>" : "<font color='#999999'>") + mFormat.format(mDate) + "</font>";
             holder.userText.setText(Html.fromHtml(formattedString));

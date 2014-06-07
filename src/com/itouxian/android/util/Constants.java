@@ -8,6 +8,20 @@ package com.itouxian.android.util;
  * To change this template use File | Settings | File Templates.
  */
 public class Constants {
+    public static final String HOST_PATH = "http://www.itouxian.com/json/";
+
+    public static final String URL_FAVORITE = HOST_PATH + "favourite";
+    public static final String URL_FAVORITE_GET = HOST_PATH + "get_favourite/%1$d?token=%2$s";
+    public static final String URL_FEED_RANDOM = HOST_PATH + "random";
+    public static final String URL_FEED_NOW = HOST_PATH + "now/%1$d";
+    public static final String URL_FEED_HOME = HOST_PATH + "index/%1$d";
+    public static final String URL_VOTE = HOST_PATH + "assess/%1$d?token=%2$s&assess=%3$d";
+    public static final String URL_COMMENTS_GET = HOST_PATH + "get_comment/%1$d/%2$d?token=%3$s";
+    public static final String URL_COMMENTS = HOST_PATH + "comment";
+    public static final String URL_REGISTER = HOST_PATH + "register";
+    public static final String URL_LOGIN = HOST_PATH + "login";
+    public static final String URL_UPLOAD = HOST_PATH + "upload";
+
     public static final String BUNDLE_KEY_FEED = "feed";
     public static final String KEY_FEED_LIST = "feed_list";
     public static final String KEY_FEED_INDEX = "index";
@@ -18,45 +32,9 @@ public class Constants {
     public static final int MODE_DAY = 0;
     public static final int MODE_NIGHT = 1;
 
-    public static final int SOURCE_U148 = 100;
-    public static final int SOURCE_JIANDAN = 101;
-    public static final int SOURCE_NEWS = 102;
-
     public static final String WX_APP_ID = "wxf862baa09e0df157";
     public static final String WEIBO_APP_KEY = "1792649719";
     public static final String REDIRECT_URL = "https://api.weibo.com/oauth2/default.html";
-
-    public static final String BASE_URL = "http://www.u148.net";
-    public static final String BASE_NEWS_URL = "http://news.cnblogs.com";
-
-    public static final String CACHED_FILE_NAME = "u148.txt";
-    public static final String CACHED_JIANDAN = "jiandan";
-    public static final String CACHED_NEWS = "news";
-
-    public static final String DOWNLOAD_STATUS_ACTION = "com.waqu.android.DOWNLOAD_STATUS";
-
-    public static final int MSG_DOWNLOAD_ERROR = 1;
-    public static final int MSG_DOWNLOAD_OVER = 2;
-    public static final int MSG_DOWNLOAD_START = 3;
-    public static final int MSG_DOWNLOAD_READY = 4;
-    public static final int MSG_NO_UPDATE = 5;
-    public static final int MSG_NO_SPACE_AVAILABLE = 6;
-
-    public static final String KEY_VIDEO_SIZE = "video_size";
-    public static final String KEY_MESSAGE_TYPE = "message_type";
-    public static final int MSG_DOWNLOAD_SUCCESS = 0;
-
-    public static final String KEY_SONG_NAME = "songName";
-    public static final String KEY_SONG_ARTIST = "artistName";
-    public static final String KEY_SONG_ICON = "songIcon";
-
-    public static final String EVENT_VIDEO_SHARE = "VideoShare";
-    public static final String EVENT_ARTICLE_SHARE = "ArticleShare";
-    public static final String EVENT_IMAGE_SHARE = "ArticleShare";
-    public static final String EVENT_COMMENT_CLICK = "CommentClick";
-
-    public static final String PARAM_TITLE = "title";
-    public static final String PARAM_URL = "url";
 
     public static final String SCOPE =
             "email,direct_messages_read,direct_messages_write,"

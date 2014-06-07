@@ -131,12 +131,11 @@ public class DetailsActivity extends BaseActivity implements ViewPager.OnPageCha
     private void favorite(long feedId) {
         String token = PrefsUtil.getUser().token;
 
-        String url = "http://www.itouxian.com/json/favourite";
         HashMap<String, String> params = new HashMap<String, String>();
         params.put("id", String.valueOf(feedId));
         params.put("token", token);
 
-        HttpUtils.post(url, params, new Response.Listener<String>() {
+        HttpUtils.post(URL_FAVORITE, params, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
                 int code = -1;

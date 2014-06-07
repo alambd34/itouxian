@@ -3,17 +3,22 @@ package com.itouxian.android.view;
 import android.app.Dialog;
 import android.content.Context;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import com.itouxian.android.R;
+import com.itouxian.android.util.HttpUtils;
 import com.itouxian.android.util.Utils;
+import volley.Response;
+import volley.VolleyError;
 
 /**
  * Created by chenjishi on 14-1-10.
  */
-public class AboutDialog extends Dialog implements View.OnClickListener {
+public class AboutDialog extends Dialog implements View.OnClickListener, Response.Listener<String>,
+        Response.ErrorListener {
     private AboutDialogListener listener;
     private int count;
 
@@ -33,6 +38,8 @@ public class AboutDialog extends Dialog implements View.OnClickListener {
 
         versionBtn.setOnClickListener(this);
         findViewById(R.id.btn_close).setOnClickListener(this);
+
+        HttpUtils.get("http://pan.baidu.com/s/1ntJTeBZ", this, this);
     }
 
     @Override
@@ -65,6 +72,19 @@ public class AboutDialog extends Dialog implements View.OnClickListener {
         getWindow().setAttributes(layoutParams);
 
         super.show();
+    }
+
+    @Override
+    public void onErrorResponse(VolleyError error) {
+        Log.i("test", "# error " + error);
+
+
+    }
+
+    @Override
+    public void onResponse(String response) {
+        Log.i("test", "# response " + response);
+
     }
 
     public interface AboutDialogListener {

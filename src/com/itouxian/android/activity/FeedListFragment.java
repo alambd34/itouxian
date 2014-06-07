@@ -293,18 +293,17 @@ public class FeedListFragment extends Fragment implements Response.Listener<Feed
         String url = null;
         switch (mFeedListType) {
             case FEED_LIST_HOME:
-                url = String.format("http://www.itouxian.com/json/index/%1$d", mPage);
+                url = String.format(URL_FEED_HOME, mPage);
                 break;
             case FEED_LIST_NOW:
-                url = String.format("http://www.itouxian.com/json/now/%1$d", mPage);
+                url = String.format(URL_FEED_NOW, mPage);
                 break;
             case FEED_LIST_RANDOM:
-                url = "http://www.itouxian.com/json/random";
+                url = URL_FEED_RANDOM;
                 break;
             case FEED_LIST_FAVORITE:
                 String token = PrefsUtil.getUser().token;
-                url = String.format("http://www.itouxian.com/json/get_favourite/%1$d?token=%2$s",
-                        mPage, token);
+                url = String.format(URL_FAVORITE_GET, mPage, token);
                 break;
         }
 
@@ -342,8 +341,7 @@ public class FeedListFragment extends Fragment implements Response.Listener<Feed
     private void vote(long feedId) {
         String token = PrefsUtil.getUser().token;
 
-        String url = "http://www.itouxian.com/json/assess/%1$d?token=%2$s&assess=%3$d";
-        HttpUtils.get(String.format(url, feedId, token, mVoteType), new Response.Listener<String>() {
+        HttpUtils.get(String.format(URL_VOTE, feedId, token, mVoteType), new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
 
@@ -358,12 +356,11 @@ public class FeedListFragment extends Fragment implements Response.Listener<Feed
     private void favorite(long feedId) {
         String token = PrefsUtil.getUser().token;
 
-        String url = "http://www.itouxian.com/json/favourite";
         HashMap<String, String> params = new HashMap<String, String>();
         params.put("id", String.valueOf(feedId));
         params.put("token", token);
 
-        HttpUtils.post(url, params, new Response.Listener<String>() {
+        HttpUtils.post(URL_FAVORITE, params, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
                 int code = -1;

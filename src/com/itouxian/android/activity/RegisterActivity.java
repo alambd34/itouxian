@@ -21,6 +21,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Pattern;
 
+import static com.itouxian.android.util.Constants.URL_REGISTER;
+
 /**
  * Created by chenjishi on 14-3-4.
  */
@@ -136,7 +138,7 @@ public class RegisterActivity extends BaseActivity implements Response.Listener<
         mProgress.setMessage(getString(R.string.registering));
         mProgress.setCancelable(false);
         mProgress.show();
-        HttpUtils.post("http://www.itouxian.com/json/register", params, this, this);
+        HttpUtils.post(URL_REGISTER, params, this, this);
     }
 
     boolean emailValid(String email) {

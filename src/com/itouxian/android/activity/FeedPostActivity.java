@@ -36,6 +36,8 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.itouxian.android.util.Constants.URL_UPLOAD;
+
 /**
  * Created by chenjishi on 14-3-30.
  */
@@ -185,13 +187,11 @@ public class FeedPostActivity extends BaseActivity implements FileUploadCallback
             if (!file.exists()) file = null;
         }
 
-        final String url = "http://www.itouxian.com/json/upload";
-
         params.put("token", token);
         params.put("content", content);
         params.put("tags", tags);
 
-        HttpUtils.postImage(url, file, params, this);
+        HttpUtils.postImage(URL_UPLOAD, file, params, this);
 
         /** save the draft, when error happens, we can repost it */
         PrefsUtil.saveDraft(content, tags, mImagePath);

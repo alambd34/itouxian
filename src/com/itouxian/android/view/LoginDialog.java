@@ -25,6 +25,8 @@ import volley.VolleyError;
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.itouxian.android.util.Constants.URL_LOGIN;
+
 /**
  * Created by chenjishi on 13-12-20.
  */
@@ -59,7 +61,7 @@ public class LoginDialog extends Dialog implements View.OnClickListener, Respons
             params.put("email", str1);
             params.put("password", str2);
 
-            HttpUtils.post("http://www.itouxian.com/json/login", params, this, this);
+            HttpUtils.post(URL_LOGIN, params, this, this);
         } else {
             Intent intent = new Intent(context, RegisterActivity.class);
             ((Activity) context).startActivityForResult(intent, MainActivity.REQUEST_CODE_REGISTER);

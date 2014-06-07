@@ -63,7 +63,7 @@
                 android:layout_height="1px"
                 android:layout_below="@id/content_box"
                 android:layout_marginTop="12dp"
-                android:layout_marginBottom="12dp"
+                android:layout_marginBottom="4dp"
                 android:background="#EEEEEE"/>
         <TextView
                 android:id="@id/up_count"
@@ -72,7 +72,7 @@
                 android:gravity="center_vertical"
                 android:drawablePadding="2dp"
                 android:background="@drawable/highlight_color"
-                android:padding="4dp"
+                android:padding="8dp"
                 android:textSize="12sp"
                 android:textColor="@color/text_color_weak"
                 android:drawableLeft="@drawable/ic_up"
@@ -86,7 +86,7 @@
                 android:gravity="center_vertical"
                 android:drawablePadding="2dp"
                 android:background="@drawable/highlight_color"
-                android:padding="6dp"
+                android:padding="8dp"
                 android:textSize="12sp"
                 android:textColor="@color/text_color_weak"
                 android:drawableLeft="@drawable/ic_down"
@@ -104,7 +104,7 @@
                 android:drawablePadding="2dp"
                 android:background="@drawable/highlight_color"
                 android:focusable="false"
-                android:padding="6dp"
+                android:padding="8dp"
                 android:textSize="12sp"
                 android:textColor="@color/text_color_weak"/>
         <ImageButton
@@ -112,7 +112,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@drawable/highlight_color"
-                android:padding="6dp"
+                android:padding="8dp"
                 android:layout_marginLeft="12dp"
                 android:src="@drawable/ic_share_small"
                 android:layout_toLeftOf="@id/comment_count"
@@ -123,7 +123,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@drawable/highlight_color"
-                android:padding="4dp"
+                android:padding="8dp"
                 android:src="@drawable/ic_favorite"
                 android:contentDescription="@null"
                 android:layout_below="@id/split_h"
