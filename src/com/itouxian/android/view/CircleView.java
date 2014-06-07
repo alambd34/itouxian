@@ -38,9 +38,9 @@ public class CircleView extends View {
         mDensity = context.getResources().getDisplayMetrics().density;
 
         mPaint.setStyle(Paint.Style.FILL);
-        mPaint.setColor(0xFFFFFFFF);
+        mPaint.setColor(Color.WHITE);
 
-        mTextPaint.setColor(Color.WHITE);
+        mTextPaint.setColor(0xFF333333);
         mTextPaint.setTextSize(mDensity * 8f);
         mTextPaint.setTextAlign(Paint.Align.CENTER);
     }
@@ -50,8 +50,6 @@ public class CircleView extends View {
         super.onDraw(canvas);
 
         if (mNumber == 0) return;
-
-        mPaint.setColor(0xFF999999);
 
         int width = getWidth();
         float r = width / 2f;

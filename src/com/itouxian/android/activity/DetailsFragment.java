@@ -18,6 +18,7 @@ import com.itouxian.android.util.Constants;
 import com.itouxian.android.util.JSCallback;
 import com.itouxian.android.util.JavaScriptBridge;
 import com.itouxian.android.util.Utils;
+import com.itouxian.android.view.CircleView;
 
 import java.text.Format;
 import java.text.SimpleDateFormat;

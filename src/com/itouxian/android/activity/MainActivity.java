@@ -54,6 +54,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener,
     private FeedPagerAdapter mPagerAdapter;
     private RadioGroup mTabGroup;
     private ViewPager mViewPager;
+    private View mDividerView;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -69,13 +70,15 @@ public class MainActivity extends BaseActivity implements View.OnClickListener,
 
         updateMenuList(Utils.isLogin());
 
+        int theme = PrefsUtil.getThemeMode();
+
         String[] titles = getResources().getStringArray(R.array.tab_titles);
         LinearLayout container = (LinearLayout) findViewById(R.id.container);
 
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, dp2px(36));
         mTabGroup = new RadioGroup(this);
         mTabGroup.setLayoutParams(lp);
-        mTabGroup.setBackgroundColor(0xFFE5E5E5);
+        mTabGroup.setBackgroundColor(MODE_NIGHT == theme ? 0xFF1C1C1C : 0xFFE5E5E5);
         mTabGroup.setWeightSum(3.f);
         mTabGroup.setOrientation(LinearLayout.HORIZONTAL);
         mTabGroup.setPadding(dp2px(8), 0, dp2px(8), 0);
@@ -93,7 +96,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener,
             button.setGravity(Gravity.CENTER);
             button.setText(titles[i]);
             button.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16);
-            button.setTextColor(0xFF333333);
+            button.setTextColor(getResources().getColorStateList(MODE_NIGHT == theme ?
+                    R.color.tab_text_color_night : R.color.tab_text_color));
             button.setButtonDrawable(new StateListDrawable());
             button.setBackgroundResource(R.drawable.abs__tab_indicator_ab_holo);
             button.setLayoutParams(layoutParams);
@@ -102,10 +106,10 @@ public class MainActivity extends BaseActivity implements View.OnClickListener,
             mTabGroup.addView(button);
         }
 
-        View divider = new View(this);
-        divider.setBackgroundColor(0xFFCCCCCC);
-        divider.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 1));
-        container.addView(divider);
+        mDividerView = new View(this);
+        mDividerView.setBackgroundColor(theme == MODE_NIGHT ? 0xFF222222 : 0xFFCCCCCC);
+        mDividerView.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 1));
+        container.addView(mDividerView);
 
         LinearLayout.LayoutParams pagerLayoutParames = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.MATCH_PARENT);
@@ -441,6 +445,16 @@ public class MainActivity extends BaseActivity implements View.OnClickListener,
     @Override
     protected void applyTheme(int theme) {
         super.applyTheme(theme);
+
+        mTabGroup.setBackgroundColor(MODE_NIGHT == theme ? 0xFF1C1C1C : 0xFFE5E5E5);
+        int count = mTabGroup.getChildCount();
+        for (int i = 0; i < count; i++) {
+            TextView textView = (TextView) mTabGroup.getChildAt(i);
+            textView.setTextColor(getResources().getColorStateList(MODE_NIGHT == theme ?
+                    R.color.tab_text_color_night : R.color.tab_text_color));
+
+        }
+        mDividerView.setBackgroundColor(theme == MODE_NIGHT ? 0xFF222222 : 0xFFCCCCCC);
     }
 
     @Override

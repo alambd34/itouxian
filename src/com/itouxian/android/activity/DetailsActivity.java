@@ -10,13 +10,17 @@ import android.text.TextUtils;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import com.itouxian.android.PrefsUtil;
 import com.itouxian.android.R;
 import com.itouxian.android.model.Feed;
 import com.itouxian.android.util.HttpUtils;
 import com.itouxian.android.util.IntentUtils;
 import com.itouxian.android.util.Utils;
+import com.itouxian.android.view.CircleView;
 import com.itouxian.android.view.LoginDialog;
+import net.youmi.android.banner.AdSize;
+import net.youmi.android.banner.AdView;
 import org.json.JSONException;
 import org.json.JSONObject;
 import volley.Response;
@@ -56,6 +60,11 @@ public class DetailsActivity extends BaseActivity implements ViewPager.OnPageCha
         mViewPager.setAdapter(mPagerAdapter);
         mViewPager.setOnPageChangeListener(this);
         mViewPager.setCurrentItem(mCurrentIndex);
+        setCommentNumber(mCurrentIndex);
+
+        AdView adView = new AdView(this, AdSize.FIT_SCREEN);
+        LinearLayout adLayout = (LinearLayout) findViewById(R.id.adLayout);
+        adLayout.addView(adView);
     }
 
     @Override
@@ -66,11 +75,26 @@ public class DetailsActivity extends BaseActivity implements ViewPager.OnPageCha
     @Override
     public void onPageSelected(int i) {
         mCurrentIndex = i;
+        setCommentNumber(mCurrentIndex);
     }
 
     @Override
     public void onPageScrollStateChanged(int i) {
 
+    }
+
+    private void setCommentNumber(int index) {
+        int commentNum = mFeedList.get(index).count_review;
+        CircleView view = (CircleView) findViewById(R.id.comment_count);
+
+        if (commentNum > 0) {
+            if (commentNum >= 100) commentNum = 99;
+
+            view.setNumber(commentNum);
+            view.setVisibility(View.VISIBLE);
+        } else {
+            view.setVisibility(View.GONE);
+        }
     }
 
     @Override
@@ -102,7 +126,6 @@ public class DetailsActivity extends BaseActivity implements ViewPager.OnPageCha
             mLoginClickType = LOGIN_FAVORITE_CLICK;
             new LoginDialog(this, this).show();
         }
-
     }
 
     private void favorite(long feedId) {
@@ -194,9 +217,9 @@ public class DetailsActivity extends BaseActivity implements ViewPager.OnPageCha
             shareBtn.setImageResource(R.drawable.ic_share_night);
             favoriteBtn.setImageResource(R.drawable.ic_favorite_night);
         } else {
-            commentBtn.setImageResource(R.drawable.ic_comment);
-            shareBtn.setImageResource(R.drawable.ic_social_share);
-            favoriteBtn.setImageResource(R.drawable.ic_favorite2);
+            commentBtn.setImageResource(R.drawable.ic_cmt);
+            shareBtn.setImageResource(R.drawable.ic_share_to);
+            favoriteBtn.setImageResource(R.drawable.ic_fav);
         }
     }
 }

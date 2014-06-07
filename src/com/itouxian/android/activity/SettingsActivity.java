@@ -16,7 +16,7 @@ import com.itouxian.android.util.Utils;
 /**
  * Created by chenjishi on 14-1-11.
  */
-public class SettingsActivity extends SlidingActivity {
+public class SettingsActivity extends BaseActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

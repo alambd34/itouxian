@@ -5,6 +5,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.text.Html;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -98,6 +99,7 @@ public class CommentActivity extends BaseActivity implements Response.Listener<C
     private void loadData() {
         final String url = String.format("http://www.itouxian.com/json/get_comment/%1$d/%2$d?token=%3$s",
                 mFeedId, mPage, mToken);
+        Log.i("test", "url " + url);
         HttpUtils.get(url, CommentData.class, this, this);
     }
 
@@ -264,7 +266,7 @@ public class CommentActivity extends BaseActivity implements Response.Listener<C
                     holder.userText.setTextColor(getResources().getColor(R.color.action_bar_color));
                     holder.contentText.setTextColor(getResources().getColor(R.color.text_color_regular));
                     holder.replyText.setTextColor(getResources().getColor(R.color.text_color_weak));
-                    holder.splitLine.setBackgroundColor(0xFFCACACA);
+                    holder.splitLine.setBackgroundColor(0xFFD0E5F2);
                 }
 
                 convertView.setTag(holder);
@@ -286,8 +288,8 @@ public class CommentActivity extends BaseActivity implements Response.Listener<C
 
             String content = comment.contents;
 
-            if (content.contains("blockquote")) {
-                final Pattern pattern = Pattern.compile("(.*?)<blockquote>(.*?)<\\/blockquote>");
+            if (content.contains("quote")) {
+                final Pattern pattern = Pattern.compile("(.*?)<div class='reply-quote'>(.*?)<\\/div>");
                 Matcher matcher = pattern.matcher(content);
 
                 String reply = "";

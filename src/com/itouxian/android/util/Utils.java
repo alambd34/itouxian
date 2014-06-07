@@ -13,6 +13,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Message;
+import android.text.Spanned;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.TextView;
@@ -119,6 +120,18 @@ public class Utils {
             if (null != info) return info.isConnected();
         }
         return false;
+    }
+
+    public static CharSequence trim(Spanned spanned, int start, int end) {
+        while (start < end && Character.isWhitespace(spanned.charAt(start))) {
+            start++;
+        }
+
+        while (end > start && Character.isWhitespace(spanned.charAt(end - 1))) {
+            end--;
+        }
+
+        return spanned.subSequence(start, end);
     }
 
     public static void shareText(Context context, String content) {

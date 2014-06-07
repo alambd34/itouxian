@@ -3,6 +3,7 @@
     <color name="background">#F0F0F0</color>
     <color name="background_night">#222</color>
     <color name="action_bar_color">#09C</color>
+    <color name="action_bar_color_night">#06C</color>
     <color name="black">#000</color>
     <color name="white">#FFF</color>
     <color name="transparent">#00000000</color>

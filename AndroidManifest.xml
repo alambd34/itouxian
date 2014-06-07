@@ -3,7 +3,7 @@
           package="com.itouxian.android"
           android:versionCode="2"
           android:versionName="1.0">
-    <uses-sdk android:minSdkVersion="9" android:targetSdkVersion="17" />
+    <uses-sdk android:minSdkVersion="9" android:targetSdkVersion="17"/>
 
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
@@ -13,11 +13,11 @@
     <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
-    <uses-permission android:name="android.permission.GET_TASKS" />
+    <uses-permission android:name="android.permission.GET_TASKS"/>
 
     <application android:label="@string/app_name" android:icon="@drawable/icon"
                  android:name=".App"
-            android:theme="@android:style/Theme.NoTitleBar">
+                 android:theme="@android:style/Theme.NoTitleBar">
         <activity android:name=".activity.SplashActivity"
                   android:launchMode="singleTop"
                   android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
@@ -53,21 +53,17 @@
         <activity android:name=".activity.DetailsActivity"
                   android:theme="@style/SlideAppTheme"
                   android:screenOrientation="portrait"/>
-        <activity
-                android:name="net.youmi.android.AdBrowser"
-                android:configChanges="keyboard|keyboardHidden|orientation|screenSize"
-                android:theme="@android:style/Theme.Light.NoTitleBar" >
-        </activity>
-        <service
-                android:name="net.youmi.android.AdService"
-                android:exported="false" >
-        </service>
+        <activity android:name="net.youmi.android.AdBrowser"
+                  android:configChanges="keyboard|keyboardHidden|orientation|screenSize"
+                  android:theme="@android:style/Theme.Light.NoTitleBar"/>
+        <service android:name="net.youmi.android.AdService"
+                 android:exported="false"/>
         <receiver
-                android:name="net.youmi.android.AdReceiver" >
+                android:name="net.youmi.android.AdReceiver">
             <intent-filter>
-                <action android:name="android.intent.action.PACKAGE_ADDED" />
-                <data android:scheme="package" />
+                <action android:name="android.intent.action.PACKAGE_ADDED"/>
+                <data android:scheme="package"/>
             </intent-filter>
         </receiver>
     </application>
-</manifest> 
+</manifest>

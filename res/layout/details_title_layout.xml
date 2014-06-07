@@ -39,13 +39,13 @@
             android:id="@+id/btn_share"
             android:layout_alignParentRight="true"
             android:onClick="onShareClicked"
-            android:src="@drawable/ic_social_share"
+            android:src="@drawable/ic_share_to"
             style="@style/ActionBarButtonStyle"/>
     <ImageButton
             android:id="@+id/btn_favorite"
             android:layout_toLeftOf="@id/btn_share"
             android:onClick="onFavoriteClicked"
-            android:src="@drawable/ic_favorite2"
+            android:src="@drawable/ic_fav"
             style="@style/ActionBarButtonStyle"/>
     <RelativeLayout
             android:id="@+id/right_view"
@@ -59,7 +59,7 @@
                 android:id="@+id/ic_comment"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/ic_comment"
+                android:src="@drawable/ic_cmt"
                 android:layout_centerInParent="true"/>
         <com.itouxian.android.view.CircleView
                 android:id="@+id/comment_count"

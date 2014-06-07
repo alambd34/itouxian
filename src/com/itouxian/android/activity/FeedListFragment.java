@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.text.Html;
+import android.text.Spanned;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
@@ -185,9 +186,13 @@ public class FeedListFragment extends Fragment implements Response.Listener<Feed
         mSwipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipe_refresh_layout);
         ListView listView = (ListView) view.findViewById(R.id.list_feed);
 
+        int theme = PrefsUtil.getThemeMode();
         mFootView = inflater.inflate(R.layout.load_more, null);
         Button loadBtn = (Button) mFootView.findViewById(R.id.btn_load);
         loadBtn.setOnClickListener(mLoadMoreClickListener);
+        loadBtn.setBackgroundResource(MODE_NIGHT == theme ?
+        R.drawable.card_bkg_night : R.drawable.card_bkg);
+        loadBtn.setTextColor(MODE_NIGHT == theme ? 0xFF999999 : 0xFF333333);
 
         mFootView.setVisibility(View.GONE);
         listView.addFooterView(mFootView);
@@ -492,6 +497,7 @@ public class FeedListFragment extends Fragment implements Response.Listener<Feed
 
                 holder.mContainer = (RelativeLayout) convertView.findViewById(R.id.item_container);
                 holder.contentBox = (RelativeLayout) convertView.findViewById(R.id.content_box);
+                holder.mDivider = convertView.findViewById(R.id.split_h);
                 holder.avatarView = (ImageView) convertView.findViewById(R.id.avatar);
                 holder.shareButton = (ImageButton) convertView.findViewById(R.id.share_content);
                 holder.favoriteButton = (ImageButton) convertView.findViewById(R.id.favorite);
@@ -511,6 +517,7 @@ public class FeedListFragment extends Fragment implements Response.Listener<Feed
                     holder.upText.setTextColor(mRes.getColor(R.color.text_color_summary));
                     holder.downText.setTextColor(mRes.getColor(R.color.text_color_summary));
                     holder.commentText.setTextColor(mRes.getColor(R.color.text_color_summary));
+                    holder.mDivider.setBackgroundColor(0xFF666666);
                 } else {
                     holder.nameText.setTextColor(mRes.getColor(R.color.text_color_weak));
                     holder.timeText.setTextColor(mRes.getColor(R.color.text_color_weak));
@@ -519,6 +526,7 @@ public class FeedListFragment extends Fragment implements Response.Listener<Feed
                     holder.upText.setTextColor(mRes.getColor(R.color.text_color_weak));
                     holder.downText.setTextColor(mRes.getColor(R.color.text_color_weak));
                     holder.commentText.setTextColor(mRes.getColor(R.color.text_color_weak));
+                    holder.mDivider.setBackgroundColor(0xFFE6E6E6);
                 }
 
                 holder.contentBox.setPadding(0, 0, 0, 0);
@@ -527,14 +535,14 @@ public class FeedListFragment extends Fragment implements Response.Listener<Feed
                     holder.imageView = new ImageView(mContext);
                     holder.imageView.setId(R.id.feed_image);
                     holder.contentBox.addView(holder.imageView);
-                    holder.contentBox.setPadding(0, 0, 0, mPadding + mPadding / 2);
+                    holder.contentBox.setPadding(0, mPadding, 0, 0);
                 }
 
                 if (itemType == FEED_IMAGE_GIF) {
                     holder.gifMovieView = new GifMovieView(mContext);
                     holder.gifMovieView.setId(R.id.feed_image);
                     holder.contentBox.addView(holder.gifMovieView);
-                    holder.contentBox.setPadding(0, 0, 0, mPadding + mPadding / 2);
+                    holder.contentBox.setPadding(0, mPadding, 0, 0);
                 }
 
                 convertView.setTag(holder);
@@ -631,7 +639,11 @@ public class FeedListFragment extends Fragment implements Response.Listener<Feed
                         content = content.substring(0, 299);
                     }
                 }
-                holder.contentText.setText(Html.fromHtml(content));
+                Spanned spanned = Html.fromHtml(content);
+                /** content ended with two /n/n(ascii code is 10), so we need remove the end break line */
+                CharSequence charSequence = Utils.trim(spanned, 0, spanned.length());
+
+                holder.contentText.setText(charSequence);
             }
 
             holder.shareButton.setTag(position);
@@ -650,6 +662,7 @@ public class FeedListFragment extends Fragment implements Response.Listener<Feed
     private static class ViewHolder {
         public RelativeLayout mContainer;
         public RelativeLayout contentBox;
+        public View mDivider;
         public ImageView avatarView;
         public ImageButton shareButton;
         public ImageButton favoriteButton;

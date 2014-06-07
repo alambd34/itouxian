@@ -153,7 +153,7 @@ public class BaseActivity extends FragmentActivity {
             final View divider = findViewById(R.id.split_h);
             final ImageView backBtn = (ImageView) findViewById(R.id.ic_arrow);
 
-            if (MODE_NIGHT == mTheme) {
+            if (MODE_NIGHT == theme) {
                 titleView.setBackgroundColor(0xFF1C1C1C);
                 titleText.setTextColor(res.getColor(R.color.white));
                 divider.setBackgroundColor(0xFF303030);

@@ -50,7 +50,7 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@id/feed_title"
                 android:lineSpacingExtra="6dp"
-                android:textSize="15sp"
+                android:textSize="14sp"
                 android:textColor="@color/text_color_regular"/>
         <RelativeLayout
                 android:id="@id/content_box"
@@ -62,6 +62,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="1px"
                 android:layout_below="@id/content_box"
+                android:layout_marginTop="12dp"
                 android:layout_marginBottom="12dp"
                 android:background="#EEEEEE"/>
         <TextView

@@ -9,9 +9,14 @@
               android:background="@drawable/dialog_bkg">
     <ImageView
             android:layout_width="100dp"
-            android:layout_height="96dp"
+            android:layout_height="92dp"
             android:contentDescription="@null"
-            android:src="@drawable/icon"/>
+            android:src="@drawable/logo"/>
+    <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@null"
+            android:src="@drawable/slogan"/>
     <Button
             android:id="@+id/btn_version"
             android:layout_width="wrap_content"
