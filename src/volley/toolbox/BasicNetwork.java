@@ -131,7 +131,14 @@ public class BasicNetwork implements Network {
                 if (httpResponse != null) {
                     statusCode = httpResponse.getStatusLine().getStatusCode();
                 } else {
-                    throw new NoConnectionError(e);
+                    /** added by chenjishi, when no network, we show the cache */
+                    Cache.Entry entry = request.getCacheEntry();
+                    if (null != entry && null != entry.data) {
+                        byte[] contents = entry.data;
+                        return new NetworkResponse(200, contents, new HashMap<String, String>(), false);
+                    } else {
+                        throw new NoConnectionError(e);
+                    }
                 }
                 VolleyLog.e("Unexpected response code %d for %s", statusCode, request.getUrl());
                 if (responseContents != null) {

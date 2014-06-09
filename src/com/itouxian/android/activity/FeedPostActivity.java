@@ -1,6 +1,8 @@
 package com.itouxian.android.activity;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -134,7 +136,21 @@ public class FeedPostActivity extends BaseActivity implements FileUploadCallback
         mTagIdsMap = idsMap;
     }
 
-    public void onCameraButtonClicked(View v) {
+    public void onImageAddClicked(View v) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setItems(new CharSequence[]{"拍照", "从手机相册选择"}, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                if (which == 0) {
+                    startCamera();
+                } else {
+                    startGallery();
+                }
+            }
+        }).show();
+    }
+
+    public void startCamera() {
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         File file = new File(FileCache.getDataCacheDir(this), "Pic.jpg");
         try {
@@ -147,7 +163,7 @@ public class FeedPostActivity extends BaseActivity implements FileUploadCallback
         startActivityForResult(intent, REQUEST_CODE_CAMERA);
     }
 
-    public void onGalleryButtonClicked(View v) {
+    public void startGallery() {
         Intent intent = new Intent(Intent.ACTION_PICK,
                 MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         startActivityForResult(intent, REQUEST_CODE_GALLERY);
@@ -291,7 +307,7 @@ public class FeedPostActivity extends BaseActivity implements FileUploadCallback
     private void setPreview(String filePath) {
         if (TextUtils.isEmpty(filePath)) return;
 
-        ImageView imageView = (ImageView) findViewById(R.id.imageView);
+        ImageView imageView = (ImageView) findViewById(R.id.preview);
 
         BitmapFactory.Options options = new BitmapFactory.Options();
         options.inJustDecodeBounds = true;

@@ -87,7 +87,7 @@ public class DetailsFragment extends Fragment implements JSCallback {
             String pubTime = getString(R.string.pub_time, mFeed.usr.nickname,
                     format.format(date));
             template = template.replace("{U_AUTHOR}", pubTime);
-            String reviews = getString(R.string.pub_reviews,mFeed.count_browse,mFeed.count_review);
+            String reviews = getString(R.string.pub_reviews,mFeed.count_browse);
             template = template.replace("{U_COMMENT}", reviews);
         } else {
             template = template.replace("{U_AUTHOR}", "");

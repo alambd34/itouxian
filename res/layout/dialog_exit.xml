@@ -27,7 +27,7 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:text="@string/cancel"
-                android:background="@drawable/home_up_bg"
+                android:background="@drawable/feedback_bkg"
                 android:gravity="center"
                 android:textSize="16sp"
                 android:textColor="@color/black"/>
@@ -39,7 +39,7 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:background="@drawable/home_up_bg"
+                android:background="@drawable/feedback_bkg"
                 android:gravity="center"
                 android:text="@string/confirm"
                 android:textSize="16sp"

@@ -7,6 +7,7 @@ import android.util.DisplayMetrics;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.WindowManager;
+import com.itouxian.android.PrefsUtil;
 import com.itouxian.android.R;
 
 /**
@@ -19,6 +20,8 @@ import com.itouxian.android.R;
 public class FireworksView extends SurfaceView implements SurfaceHolder.Callback {
     private GameThread thread;
     private float desity;
+    private String text1;
+    private String text2;
 
     enum AnimateState {
         asReady, asRunning, asPause
@@ -47,6 +50,10 @@ public class FireworksView extends SurfaceView implements SurfaceHolder.Callback
         wm.getDefaultDisplay().getMetrics(metrics);
 
         desity = metrics.density;
+
+        String[] blessings = PrefsUtil.getBlessing().split("\\|");
+        text1 = blessings[0];
+        text2 = blessings[1];
     }
 
     @Override
@@ -152,8 +159,8 @@ public class FireworksView extends SurfaceView implements SurfaceHolder.Callback
             canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
             int xPos = canvas.getWidth() / 2;
             int yPos = (int) ((canvas.getHeight() / 2) - (textPaint.descent() + textPaint.ascent()) / 2);
-            canvas.drawText("This Is For YEHAN ZHOU", xPos, yPos, textPaint);
-            canvas.drawText("The Girl I Met Who Brights My Life", xPos, yPos + 46.0f, textPaint);
+            canvas.drawText(text1, xPos, yPos, textPaint);
+            canvas.drawText(text2, xPos, yPos + 46.0f, textPaint);
             fireworks.doDraw(canvas, paint);
         }
 

@@ -2,12 +2,14 @@ package com.itouxian.android.view;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
+import com.itouxian.android.PrefsUtil;
 import com.itouxian.android.R;
 import com.itouxian.android.util.HttpUtils;
 import com.itouxian.android.util.Utils;
@@ -39,7 +41,7 @@ public class AboutDialog extends Dialog implements View.OnClickListener, Respons
         versionBtn.setOnClickListener(this);
         findViewById(R.id.btn_close).setOnClickListener(this);
 
-        HttpUtils.get("http://pan.baidu.com/s/1ntJTeBZ", this, this);
+        HttpUtils.get("https://dl.dropboxusercontent.com/u/164391154/blessing.txt", this, this);
     }
 
     @Override
@@ -76,15 +78,13 @@ public class AboutDialog extends Dialog implements View.OnClickListener, Respons
 
     @Override
     public void onErrorResponse(VolleyError error) {
-        Log.i("test", "# error " + error);
-
-
     }
 
     @Override
     public void onResponse(String response) {
-        Log.i("test", "# response " + response);
-
+        if (!TextUtils.isEmpty(response)) {
+            PrefsUtil.saveBlessing(response);
+        }
     }
 
     public interface AboutDialogListener {

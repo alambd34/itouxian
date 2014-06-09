@@ -50,7 +50,7 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@id/feed_title"
                 android:lineSpacingExtra="6dp"
-                android:textSize="14sp"
+                android:textSize="15sp"
                 android:textColor="@color/text_color_regular"/>
         <RelativeLayout
                 android:id="@id/content_box"

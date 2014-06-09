@@ -53,6 +53,31 @@ public class PrefsUtil {
     private static final String KEY_AD_SHOWED = "key_ad_showed";
     private static final String KEY_THEME_MODE = "theme_mode";
 
+    private static final String KEY_CHANNELS = "channels";
+
+    public static final String KEY_BLESSING = "blessing";
+    public static final String DEFAULT_BLESSING = "This Is For YEHAN ZHOU|The Girl I Met Who Brights My Life";
+
+    public static void saveChannels(String s) {
+        saveStringPreference(KEY_CHANNELS, s);
+    }
+
+    public static String getChannels() {
+        return getStringPreference(KEY_CHANNELS);
+    }
+
+    public static void saveBlessing(String s) {
+        saveStringPreference(KEY_BLESSING, s);
+    }
+
+    public static String getBlessing() {
+        String s = getStringPreference(KEY_BLESSING);
+        if (TextUtils.isEmpty(s)) {
+            s = DEFAULT_BLESSING;
+        }
+        return s;
+    }
+
     public static void saveDraft(String content, String tags, String path) {
         SharedPreferences.Editor editor = mContext.getSharedPreferences(CONFIG_FILE_NAME, Context.MODE_PRIVATE).edit();
         editor.putString(KEY_DRAFT_CONTENT, content);

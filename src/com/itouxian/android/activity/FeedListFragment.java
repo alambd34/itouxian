@@ -11,6 +11,7 @@ import android.text.Html;
 import android.text.Spanned;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -250,6 +251,7 @@ public class FeedListFragment extends Fragment implements Response.Listener<Feed
 
     @Override
     public void onErrorResponse(VolleyError error) {
+        Log.i("test", "error " + error);
         setPullComplete();
         mFootView.setVisibility(View.GONE);
 

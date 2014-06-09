@@ -7,7 +7,7 @@
     <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:background="@null"
+            android:background="@drawable/feedback_bkg"
             android:clickable="true"
             android:onClick="onLeftViewClicked"
             android:layout_alignParentLeft="true"

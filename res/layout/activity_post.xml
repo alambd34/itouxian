@@ -16,48 +16,18 @@
             android:textSize="16sp"
             android:textColorHint="#999"
             android:hint="说点什么吧"/>
-    <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="12dp">
-        <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@drawable/highlight_color"
-                android:drawableTop="@drawable/ic_camera"
-                android:gravity="center_horizontal"
-                android:paddingLeft="16dp"
-                android:paddingRight="16dp"
-                android:clickable="true"
-                android:onClick="onCameraButtonClicked"
-                android:text="相机"
-                android:textSize="16sp"
-                android:textColor="#666"/>
-        <View android:layout_width="2dp"
-              android:layout_height="60dp"
-              android:background="@color/text_color_weak"/>
-        <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@drawable/highlight_color"
-                android:drawableTop="@drawable/ic_picture"
-                android:gravity="center_horizontal"
-                android:paddingLeft="12dp"
-                android:paddingRight="12dp"
-                android:clickable="true"
-                android:onClick="onGalleryButtonClicked"
-                android:text="相册"
-                android:textSize="16sp"
-                android:textColor="#666"/>
-    </LinearLayout>
+    <ImageView
+            android:id="@+id/preview"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:clickable="true"
+            android:onClick="onImageAddClicked"
+            android:layout_marginTop="12dp"
+            android:layout_marginBottom="12dp"
+            android:contentDescription="@null"
+            android:src="@drawable/ic_add"/>
     <com.itouxian.android.view.TagGroupView
             android:id="@+id/tag_group"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
-    <ImageView
-            android:id="@+id/imageView"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            android:layout_marginTop="12dp"
-            android:contentDescription="@null"/>
 </LinearLayout>

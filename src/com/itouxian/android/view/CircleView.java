@@ -6,6 +6,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.util.AttributeSet;
 import android.view.View;
+import com.itouxian.android.R;
 
 /**
  * Created by chenjishi on 14-5-6.
@@ -40,7 +41,7 @@ public class CircleView extends View {
         mPaint.setStyle(Paint.Style.FILL);
         mPaint.setColor(Color.WHITE);
 
-        mTextPaint.setColor(0xFF333333);
+        mTextPaint.setColor(0xFF0091C4);
         mTextPaint.setTextSize(mDensity * 8f);
         mTextPaint.setTextAlign(Paint.Align.CENTER);
     }

@@ -71,9 +71,9 @@
     <string name="share_from">来自爱偷闲的分享</string>
 
     <string name="pub_time">%1$s&#160;&#160;%2$s</string>
-    <string name="pub_reviews">%1$d人看过&#160;&#160;%2$d评论</string>
+    <string name="pub_reviews">%1$d人看过</string>
 
-    <string name="copyright">©2007 - 2019 Www.Itouxian.Com</string>
+    <string name="copyright">©2012 - 2019 Www.iTouxian.Com</string>
     <string name="close_dialog">关闭窗口</string>
 
     <string name="login_input_empty">请输入用户名和密码</string>
