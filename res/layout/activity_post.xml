@@ -6,7 +6,8 @@
               android:layout_height="match_parent"
               android:paddingLeft="12dp"
               android:paddingTop="24dp"
-              android:paddingRight="12dp">
+              android:paddingRight="12dp"
+              android:paddingBottom="12dp">
     <EditText
             android:id="@+id/edit_content"
             android:layout_width="match_parent"
@@ -16,18 +17,19 @@
             android:textSize="16sp"
             android:textColorHint="#999"
             android:hint="说点什么吧"/>
+    <com.itouxian.android.view.TagGroupView
+            android:id="@+id/tag_group"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"/>
     <ImageView
             android:id="@+id/preview"
             android:layout_width="100dp"
             android:layout_height="100dp"
+            android:layout_gravity="center_horizontal"
             android:clickable="true"
             android:onClick="onImageAddClicked"
             android:layout_marginTop="12dp"
-            android:layout_marginBottom="12dp"
             android:contentDescription="@null"
             android:src="@drawable/ic_add"/>
-    <com.itouxian.android.view.TagGroupView
-            android:id="@+id/tag_group"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
 </LinearLayout>

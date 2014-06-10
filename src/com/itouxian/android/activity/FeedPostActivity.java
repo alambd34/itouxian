@@ -15,12 +15,15 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.view.MotionEventCompat;
 import android.text.TextUtils;
+import android.util.DisplayMetrics;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import com.itouxian.android.FileCache;
 import com.itouxian.android.PrefsUtil;
@@ -314,9 +317,21 @@ public class FeedPostActivity extends BaseActivity implements FileUploadCallback
 
         BitmapFactory.decodeFile(filePath, options);
 
-        int imageWidth = imageView.getWidth();
-        int imageHeight = imageView.getHeight();
-        options.inSampleSize = Utils.calculateInSampleSize(options, imageWidth, imageHeight);
+        DisplayMetrics metrics = getResources().getDisplayMetrics();
+
+        int width = metrics.widthPixels - 2 * dp2px(8);
+
+        int[] location = new int[2];
+        imageView.getLocationOnScreen(location);
+
+        int height = metrics.heightPixels - 2 * dp2px(12) - location[1];
+        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(width, height);
+        lp.setMargins(0, dp2px(8), 0, 0);
+
+        imageView.setLayoutParams(lp);
+        imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
+
+        options.inSampleSize = Utils.calculateInSampleSize(options, width, height);
         options.inJustDecodeBounds = false;
 
         Bitmap bitmap = BitmapFactory.decodeFile(filePath, options);

@@ -214,11 +214,19 @@ public class DetailsActivity extends BaseActivity implements ViewPager.OnPageCha
         if (MODE_NIGHT == theme) {
             commentBtn.setImageResource(R.drawable.ic_comment_night);
             shareBtn.setImageResource(R.drawable.ic_share_night);
+            shareBtn.setBackgroundResource(R.drawable.feedback_bkg_night);
             favoriteBtn.setImageResource(R.drawable.ic_favorite_night);
+            favoriteBtn.setBackgroundResource(R.drawable.feedback_bkg_night);
+
+            findViewById(R.id.right_view).setBackgroundResource(R.drawable.feedback_bkg_night);
         } else {
             commentBtn.setImageResource(R.drawable.ic_cmt);
             shareBtn.setImageResource(R.drawable.ic_share_to);
+            shareBtn.setBackgroundResource(R.drawable.feedback_bkg);
             favoriteBtn.setImageResource(R.drawable.ic_fav);
+            favoriteBtn.setBackgroundResource(R.drawable.feedback_bkg);
+
+            findViewById(R.id.right_view).setBackgroundResource(R.drawable.feedback_bkg);
         }
     }
 }

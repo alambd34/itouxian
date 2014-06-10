@@ -11,7 +11,6 @@ import android.text.Html;
 import android.text.Spanned;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -251,7 +250,6 @@ public class FeedListFragment extends Fragment implements Response.Listener<Feed
 
     @Override
     public void onErrorResponse(VolleyError error) {
-        Log.i("test", "error " + error);
         setPullComplete();
         mFootView.setVisibility(View.GONE);
 
@@ -516,7 +514,7 @@ public class FeedListFragment extends Fragment implements Response.Listener<Feed
                     holder.upText.setTextColor(mRes.getColor(R.color.text_color_summary));
                     holder.downText.setTextColor(mRes.getColor(R.color.text_color_summary));
                     holder.commentText.setTextColor(mRes.getColor(R.color.text_color_summary));
-                    holder.mDivider.setBackgroundColor(0xFF666666);
+                    holder.mDivider.setBackgroundColor(0xFF444444);
                 } else {
                     holder.nameText.setTextColor(mRes.getColor(R.color.text_color_weak));
                     holder.timeText.setTextColor(mRes.getColor(R.color.text_color_weak));

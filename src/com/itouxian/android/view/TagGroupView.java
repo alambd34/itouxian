@@ -42,9 +42,6 @@ public class TagGroupView extends RelativeLayout implements View.OnClickListener
 
     private void init(Context context) {
         mContext = context;
-        int padding = Utils.dp2px(context, 8);
-        setPadding(padding, padding, padding, padding);
-        setBackgroundColor(0xFFE5E5E5);
 
         mSelectedMap = new HashMap<Integer, String>();
 
@@ -97,7 +94,7 @@ public class TagGroupView extends RelativeLayout implements View.OnClickListener
         mIdsMap = new HashMap<Integer, Integer>();
         int margin = Utils.dp2px(mContext, 8);
         int width = (getResources().getDisplayMetrics().widthPixels
-                - 2 * Utils.dp2px(mContext, 8) - 2 * Utils.dp2px(mContext, 12) - 3 * margin) / 4;
+                - 2 * Utils.dp2px(mContext, 12) - 3 * margin) / 4;
         for (int i = 0; i < row; i++) {
             for (int j = 0; j < (i == row - 1 ? (size - column * (row - 1)) : column); j++) {
                 int index = i * column + j;

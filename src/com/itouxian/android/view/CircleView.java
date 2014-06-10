@@ -6,7 +6,8 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.util.AttributeSet;
 import android.view.View;
-import com.itouxian.android.R;
+import com.itouxian.android.PrefsUtil;
+import com.itouxian.android.util.Constants;
 
 /**
  * Created by chenjishi on 14-5-6.
@@ -38,10 +39,12 @@ public class CircleView extends View {
     private void init(Context context) {
         mDensity = context.getResources().getDisplayMetrics().density;
 
-        mPaint.setStyle(Paint.Style.FILL);
-        mPaint.setColor(Color.WHITE);
+        int mode = PrefsUtil.getThemeMode();
 
-        mTextPaint.setColor(0xFF0091C4);
+        mPaint.setStyle(Paint.Style.FILL);
+        mPaint.setColor(Constants.MODE_NIGHT == mode ? 0xFF666666 : Color.WHITE);
+
+        mTextPaint.setColor(Constants.MODE_NIGHT == mode ? 0xFF1C1C1C : 0xFF0091C4);
         mTextPaint.setTextSize(mDensity * 8f);
         mTextPaint.setTextAlign(Paint.Align.CENTER);
     }

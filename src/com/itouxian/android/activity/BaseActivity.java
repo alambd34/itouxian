@@ -153,13 +153,17 @@ public class BaseActivity extends FragmentActivity {
             final View divider = findViewById(R.id.split_h);
             final ImageView backBtn = (ImageView) findViewById(R.id.ic_arrow);
 
+            final View leftView = findViewById(R.id.back_view);
+
             if (MODE_NIGHT == theme) {
                 titleView.setBackgroundColor(0xFF1C1C1C);
-                titleText.setTextColor(res.getColor(R.color.white));
+                titleText.setTextColor(0xFF666666);
                 divider.setBackgroundColor(0xFF303030);
                 if (null != backBtn) {
                     backBtn.setImageResource(R.drawable.ic_back_night);
                 }
+                if (null != leftView)
+                    leftView.setBackgroundResource(R.drawable.feedback_bkg_night);
             } else {
                 titleView.setBackgroundColor(res.getColor(R.color.action_bar_color));
                 titleText.setTextColor(res.getColor(R.color.white));
@@ -167,6 +171,8 @@ public class BaseActivity extends FragmentActivity {
                 if (null != backBtn) {
                     backBtn.setImageResource(R.drawable.ic_back);
                 }
+                if (null != leftView)
+                    leftView.setBackgroundResource(R.drawable.feedback_bkg);
             }
         }
     }

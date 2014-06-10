@@ -2,6 +2,7 @@ package com.itouxian.android.activity;
 
 import android.content.Intent;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.graphics.drawable.StateListDrawable;
 import android.media.MediaPlayer;
 import android.os.Bundle;
@@ -455,6 +456,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener,
 
         }
         mDividerView.setBackgroundColor(theme == MODE_NIGHT ? 0xFF222222 : 0xFFCCCCCC);
+
+        ((TextView) findViewById(R.id.title_text)).setTextColor(Color.WHITE);
     }
 
     @Override

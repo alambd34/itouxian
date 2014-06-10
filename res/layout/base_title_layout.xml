@@ -5,6 +5,7 @@
                 android:layout_height="@dimen/action_bar_height"
                 android:background="@color/action_bar_color">
     <LinearLayout
+            android:id="@+id/back_view"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:background="@drawable/feedback_bkg"

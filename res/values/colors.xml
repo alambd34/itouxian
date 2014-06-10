@@ -17,8 +17,8 @@
 
     <color name="text_color_summary">#ff666666</color>
 
-    <color name="color1">#E6FFFFFF</color>
-    <color name="color2">#B3FFFFFF</color>
-    <color name="color3">#80FFFFFF</color>
-    <color name="color4">#4DFFFFFF</color>
+    <color name="color1">#FFFFFF</color>
+    <color name="color2">#000000</color>
+    <color name="color3">#FFFFFF</color>
+    <color name="color4">#000000</color>
 </resources>
