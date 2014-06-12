@@ -20,20 +20,20 @@
             android:textSize="@dimen/action_bar_subtitle_size"/>
     <RelativeLayout
             android:id="@+id/right_view"
-            android:layout_width="wrap_content"
+            android:layout_width="48dp"
             android:layout_height="match_parent"
-            android:visibility="gone">
-        <ImageButton
-                android:id="@+id/btn_right"
-                android:layout_width="@dimen/action_bar_height"
-                android:layout_height="match_parent"
-                android:clickable="true"
-                android:onClick="onRightButtonClicked"
-                android:background="@drawable/highlight_color"
-                android:adjustViewBounds="true"
-                android:contentDescription="@null"
-                android:layout_centerInParent="true"
-                android:layout_alignParentRight="true"/>
+            android:background="@drawable/feedback_bkg"
+            android:clickable="true"
+            android:onClick="onRightButtonClicked"
+            android:layout_alignParentRight="true">
+        <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="10dp"
+                android:src="@drawable/ic_edit"
+                android:background="@null"
+                android:contentDescription="@null"/>
     </RelativeLayout>
     <View
             android:id="@+id/split_h"

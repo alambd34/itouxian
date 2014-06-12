@@ -61,7 +61,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener,
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main, R.layout.home_title_layout);
-        setRightButtonIcon(R.drawable.ic_edit);
 
         mTitleText = (TextView) findViewById(R.id.title_text);
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -456,6 +455,12 @@ public class MainActivity extends BaseActivity implements View.OnClickListener,
 
         }
         mDividerView.setBackgroundColor(theme == MODE_NIGHT ? 0xFF222222 : 0xFFCCCCCC);
+
+        RelativeLayout rightView = (RelativeLayout) findViewById(R.id.right_view);
+        if (null != rightView) {
+            rightView.setBackgroundResource(MODE_NIGHT == theme ? R.drawable.feedback_bkg_night :
+            R.drawable.feedback_bkg);
+        }
 
         ((TextView) findViewById(R.id.title_text)).setTextColor(Color.WHITE);
     }

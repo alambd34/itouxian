@@ -329,7 +329,7 @@ public class FeedPostActivity extends BaseActivity implements FileUploadCallback
         lp.setMargins(0, dp2px(8), 0, 0);
 
         imageView.setLayoutParams(lp);
-        imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
+        imageView.setScaleType(ImageView.ScaleType.CENTER);
 
         options.inSampleSize = Utils.calculateInSampleSize(options, width, height);
         options.inJustDecodeBounds = false;

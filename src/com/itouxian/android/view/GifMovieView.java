@@ -147,10 +147,17 @@ public class GifMovieView extends View implements Response.Listener<byte[]>, Res
             int movieWidth = mMovie.width();
             int movieHeight = mMovie.height();
 
-            mRequestHeight = mRequestWidth * movieHeight / movieWidth;
+            if (movieWidth == 0 || movieHeight == 0) {
+                mRequestHeight = mRequestWidth;
 
-            mScaleX = mRequestWidth * 1f / movieWidth;
-            mScaleY = mRequestHeight * 1f / movieHeight;
+                mScaleX = 1;
+                mScaleY = 1;
+            } else {
+                mRequestHeight = mRequestWidth * movieHeight / movieWidth;
+
+                mScaleX = mRequestWidth * 1f / movieWidth;
+                mScaleY = mRequestHeight * 1f / movieHeight;
+            }
 
             setMeasuredDimension(mRequestWidth, mRequestHeight);
 

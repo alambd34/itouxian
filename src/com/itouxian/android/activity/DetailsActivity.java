@@ -62,9 +62,9 @@ public class DetailsActivity extends BaseActivity implements ViewPager.OnPageCha
         mViewPager.setCurrentItem(mCurrentIndex);
         setCommentNumber(mCurrentIndex);
 
-        AdView adView = new AdView(this, AdSize.FIT_SCREEN);
-        LinearLayout adLayout = (LinearLayout) findViewById(R.id.adLayout);
-        adLayout.addView(adView);
+//        AdView adView = new AdView(this, AdSize.FIT_SCREEN);
+//        LinearLayout adLayout = (LinearLayout) findViewById(R.id.adLayout);
+//        adLayout.addView(adView);
     }
 
     @Override
