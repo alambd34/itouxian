@@ -19,6 +19,7 @@ import com.itouxian.android.util.IntentUtils;
 import com.itouxian.android.util.Utils;
 import com.itouxian.android.view.CircleView;
 import com.itouxian.android.view.LoginDialog;
+import com.itouxian.android.view.ShareDialog;
 import net.youmi.android.banner.AdSize;
 import net.youmi.android.banner.AdView;
 import org.json.JSONException;
@@ -62,9 +63,9 @@ public class DetailsActivity extends BaseActivity implements ViewPager.OnPageCha
         mViewPager.setCurrentItem(mCurrentIndex);
         setCommentNumber(mCurrentIndex);
 
-//        AdView adView = new AdView(this, AdSize.FIT_SCREEN);
-//        LinearLayout adLayout = (LinearLayout) findViewById(R.id.adLayout);
-//        adLayout.addView(adView);
+        AdView adView = new AdView(this, AdSize.FIT_SCREEN);
+        LinearLayout adLayout = (LinearLayout) findViewById(R.id.adLayout);
+        adLayout.addView(adView);
     }
 
     @Override
@@ -167,15 +168,16 @@ public class DetailsActivity extends BaseActivity implements ViewPager.OnPageCha
         }
     }
 
+    private ShareDialog mShareDialog;
     public void onShareClicked(View view) {
         Feed feed = mFeedList.get(mCurrentIndex);
 
-        String imageUrl = feed.imageUrl;
-        if (!TextUtils.isEmpty(imageUrl)) {
-            Utils.shareImage(this, imageUrl);
-        } else {
-            Utils.shareText(this, feed.contents);
+        if (null == mShareDialog) {
+            mShareDialog = new ShareDialog(this);
         }
+
+        mShareDialog.setShareData(feed);
+        mShareDialog.show();
     }
 
     private void startCommentActivity(long id) {

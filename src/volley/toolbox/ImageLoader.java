@@ -20,13 +20,11 @@ import android.graphics.Bitmap.Config;
 import android.os.Handler;
 import android.os.Looper;
 import android.widget.ImageView;
-
 import volley.Request;
 import volley.RequestQueue;
 import volley.Response.ErrorListener;
 import volley.Response.Listener;
 import volley.VolleyError;
-import volley.toolbox.ImageRequest;
 
 import java.util.HashMap;
 import java.util.LinkedList;

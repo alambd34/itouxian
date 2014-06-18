@@ -26,6 +26,7 @@ import com.itouxian.android.util.Utils;
 import com.itouxian.android.view.GifMovieView;
 import com.itouxian.android.view.LoadingView;
 import com.itouxian.android.view.LoginDialog;
+import com.itouxian.android.view.ShareDialog;
 import org.json.JSONException;
 import org.json.JSONObject;
 import volley.Response;
@@ -78,6 +79,8 @@ public class FeedListFragment extends Fragment implements Response.Listener<Feed
     private long mClickedItemId;
     private int mVoteType;
 
+    private ShareDialog mShareDialog;
+
     private ArrayList<Feed> mFeedList = new ArrayList<Feed>();
 
     private View.OnClickListener mCommentClickListener = new View.OnClickListener() {
@@ -125,23 +128,18 @@ public class FeedListFragment extends Fragment implements Response.Listener<Feed
     private View.OnClickListener mShareClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
+            Context context = getActivity();
+            if (!Utils.didNetworkConnected(context)) return;
+
             int position = (Integer) v.getTag();
             Feed feed = mFeedList.get(position);
 
-            String imageUrl = feed.imageUrl;
-            if (!TextUtils.isEmpty(imageUrl)) {
-                Utils.shareImage(getActivity(), imageUrl);
-            } else {
-                String content = feed.contents;
-                content = content.replaceAll("<p>|<\\/p>|&(.*?);", "");
-                content += " - 来自爱偷闲 iTouxian.Com";
-
-                Intent sendIntent = new Intent();
-                sendIntent.setAction(Intent.ACTION_SEND);
-                sendIntent.putExtra(Intent.EXTRA_TEXT, content);
-                sendIntent.setType("text/plain");
-                startActivity(Intent.createChooser(sendIntent, getString(R.string.share_from)));
+            if (null == mShareDialog) {
+                mShareDialog = new ShareDialog(context);
             }
+
+            mShareDialog.setShareData(feed);
+            mShareDialog.show();
         }
     };
 
@@ -407,6 +405,8 @@ public class FeedListFragment extends Fragment implements Response.Listener<Feed
         private Resources mRes;
         private int mPadding;
 
+        private RelativeLayout.LayoutParams mLayoutParams;
+
         public FeedListAdapter(Context context) {
             mContext = context;
             mInflater = LayoutInflater.from(context);
@@ -426,7 +426,10 @@ public class FeedListFragment extends Fragment implements Response.Listener<Feed
             DisplayMetrics metrics = getResources().getDisplayMetrics();
             int width = metrics.widthPixels;
             float density = metrics.density;
-            mImageWidth = width - (int) ((12 * 2 + 8 * 2) * density + .5f);
+            mImageWidth = width - (int) ((8 * 2 + 8 * 2) * density + .5f);
+
+            mLayoutParams = new RelativeLayout.LayoutParams(mImageWidth, ViewGroup.LayoutParams.WRAP_CONTENT);
+            mLayoutParams.addRule(RelativeLayout.CENTER_HORIZONTAL);
         }
 
         @Override
@@ -538,6 +541,7 @@ public class FeedListFragment extends Fragment implements Response.Listener<Feed
                 if (itemType == FEED_IMAGE_GIF) {
                     holder.gifMovieView = new GifMovieView(mContext);
                     holder.gifMovieView.setId(R.id.feed_image);
+                    holder.gifMovieView.setLayoutParams(mLayoutParams);
                     holder.contentBox.addView(holder.gifMovieView);
                     holder.contentBox.setPadding(0, mPadding, 0, 0);
                 }
@@ -618,6 +622,7 @@ public class FeedListFragment extends Fragment implements Response.Listener<Feed
 
                                 int desiredHeight = mImageWidth * h / w;
                                 RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(mImageWidth, desiredHeight);
+                                lp.addRule(RelativeLayout.CENTER_HORIZONTAL);
                                 feedImageView.setLayoutParams(lp);
                                 feedImageView.setImageBitmap(bitmap);
                             }

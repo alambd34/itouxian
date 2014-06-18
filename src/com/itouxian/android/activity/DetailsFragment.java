@@ -107,6 +107,7 @@ public class DetailsFragment extends Fragment implements JSCallback {
         Intent intent = new Intent(getActivity(), PhotoViewActivity.class);
         intent.putExtra("imgsrc", url);
         intent.putStringArrayListExtra("images", list);
+        intent.putExtra("feed", mFeed);
         startActivity(intent);
     }
 

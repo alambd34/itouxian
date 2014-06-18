@@ -22,9 +22,11 @@ import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import com.itouxian.android.R;
+import com.itouxian.android.model.Feed;
 import com.itouxian.android.util.DepthPageTransformer;
 import com.itouxian.android.util.HttpUtils;
 import com.itouxian.android.util.Utils;
+import com.itouxian.android.view.ShareDialog;
 import com.itouxian.android.view.TouchImageView;
 import volley.VolleyError;
 import volley.toolbox.ImageLoader;
@@ -48,6 +50,8 @@ public class PhotoViewActivity extends Activity implements ViewPager.OnPageChang
     private boolean showToolBar = false;
 
     private int mTouchSlop;
+
+    private Feed mFeed;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,6 +84,8 @@ public class PhotoViewActivity extends Activity implements ViewPager.OnPageChang
 
         mImageList = bundle.getStringArrayList("images");
         String currentUrl = bundle.getString("imgsrc");
+
+        mFeed = bundle.getParcelable("feed");
 
         for (int i = 0; i < mImageList.size(); i++) {
             if (mImageList.get(i).equals(currentUrl)) {
@@ -155,11 +161,14 @@ public class PhotoViewActivity extends Activity implements ViewPager.OnPageChang
         saveImage();
     }
 
+    private ShareDialog mShareDialog;
     public void onShareButtonClicked(View v) {
-        String url = mImageList.get(mCurrentIndex);
-        if (TextUtils.isEmpty(url)) return;
+        if (null == mShareDialog) {
+            mShareDialog = new ShareDialog(this);
+        }
 
-        Utils.shareImage(this, url);
+        mShareDialog.setShareData(mFeed);
+        mShareDialog.show();
     }
 
     private void onTapUp() {

@@ -19,8 +19,6 @@ import net.youmi.android.AdManager;
 import net.youmi.android.spot.SpotManager;
 
 import java.io.File;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Created by chenjishi on 14-2-15.
@@ -34,6 +32,18 @@ public class SplashActivity extends Activity {
         getWindow().getDecorView().setBackgroundColor(getResources().getColor(R.color.background));
 
         new LoadTask().execute();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        FlurryAgent.onStartSession(this, "ZZF7PQQ23BYVC9V9TXW3");
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        FlurryAgent.onEndSession(this);
     }
 
     private class LoadTask extends AsyncTask<Void, Void, Boolean> {
@@ -86,12 +96,13 @@ public class SplashActivity extends Activity {
             if (null != appInfo.metaData) {
                 String channel = appInfo.metaData.getString("CHANNEL");
 
-                Map<String, String> params = new HashMap<String, String>();
-                params.put("name", channel);
-                params.put("version", Utils.getVersionName(this));
+//                Map<String, String> params = new HashMap<String, String>();
+//                params.put("name", channel);
+//                params.put("version", Utils.getVersionName(this));
+//
+//                FlurryAgent.logEvent("CHANNEL", params);
 
-                FlurryAgent.logEvent("CHANNEL", params);
-
+                FlurryAgent.logEvent(channel);
                 int versionCode = Utils.getVersionCode(this);
                 PrefsUtil.saveChannels(channel + "|" + versionCode);
             }
