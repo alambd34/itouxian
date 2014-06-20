@@ -8,6 +8,14 @@ package com.itouxian.android.util;
  * To change this template use File | Settings | File Templates.
  */
 public class Constants {
+    public static final String FLURRY_REGISTER_SUCCESS = "REGISTER_SUCCESS";
+    public static final String FLURRY_REGISTER_FAIL = "REGISTER_FAIL";
+    public static final String FLURRY_REGISTER_BUTTON = "REGISTER_BUTTON_SUBMIT";
+    public static final String FLURRY_POST_BUTTON = "POST_BUTTON_SUBMIT";
+    public static final String FLURRY_POST_SUCCESS = "POST_SUCCESS";
+    public static final String FLURRY_POST_FAIL = "POST_FAIL";
+    public static final String FLURRY_CHANNEL = "CHANNEL";
+
     public static final String HOST_PATH = "http://www.itouxian.com/json/";
 
     public static final String URL_FAVORITE = HOST_PATH + "favourite";

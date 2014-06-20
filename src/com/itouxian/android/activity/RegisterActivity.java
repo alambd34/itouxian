@@ -6,6 +6,7 @@ import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import com.flurry.android.FlurryAgent;
 import com.itouxian.android.PrefsUtil;
 import com.itouxian.android.R;
 import com.itouxian.android.model.UserInfo;
@@ -22,6 +23,9 @@ import java.util.Map;
 import java.util.regex.Pattern;
 
 import static com.itouxian.android.util.Constants.URL_REGISTER;
+import static com.itouxian.android.util.Constants.FLURRY_REGISTER_FAIL;
+import static com.itouxian.android.util.Constants.FLURRY_REGISTER_SUCCESS;
+import static com.itouxian.android.util.Constants.FLURRY_REGISTER_BUTTON;
 
 /**
  * Created by chenjishi on 14-3-4.
@@ -46,8 +50,14 @@ public class RegisterActivity extends BaseActivity implements Response.Listener<
 
     @Override
     public void onErrorResponse(VolleyError error) {
-        Utils.showToast(R.string.register_fail);
         mProgress.dismiss();
+        int resId = R.string.register_fail;
+        if (!Utils.didNetworkConnected(this)) {
+            resId = R.string.net_error;
+        } else {
+            FlurryAgent.logEvent(FLURRY_REGISTER_FAIL);
+        }
+        Utils.showToast(resId);
     }
 
     @Override
@@ -62,6 +72,7 @@ public class RegisterActivity extends BaseActivity implements Response.Listener<
                     if (!TextUtils.isEmpty(msg)) {
                         Utils.showToast(msg);
                     }
+                    FlurryAgent.logEvent(FLURRY_REGISTER_FAIL);
                 } else {
                     Utils.showToast(R.string.register_success);
                     PrefsUtil.setRegisterTime(System.currentTimeMillis());
@@ -74,6 +85,8 @@ public class RegisterActivity extends BaseActivity implements Response.Listener<
                     user.token = dataObj.optString("token", "");
 
                     PrefsUtil.setUser(user);
+                    FlurryAgent.logEvent(FLURRY_REGISTER_SUCCESS);
+
                     setResult(MainActivity.RESULT_CODE_REGISTER);
                     finish();
                 }
@@ -83,6 +96,7 @@ public class RegisterActivity extends BaseActivity implements Response.Listener<
 
         } else {
             Utils.showToast(R.string.register_network_error);
+            FlurryAgent.logEvent(FLURRY_REGISTER_FAIL);
         }
         mProgress.dismiss();
     }
@@ -139,6 +153,8 @@ public class RegisterActivity extends BaseActivity implements Response.Listener<
         mProgress.setCancelable(false);
         mProgress.show();
         HttpUtils.post(URL_REGISTER, params, this, this);
+
+        FlurryAgent.logEvent(FLURRY_REGISTER_BUTTON);
     }
 
     boolean emailValid(String email) {

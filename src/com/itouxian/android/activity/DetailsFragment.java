@@ -140,6 +140,7 @@ public class DetailsFragment extends Fragment implements JSCallback, View.OnClic
             mEmptyView.setTextColor(getResources().getColor(R.color.action_bar_color));
             mEmptyView.setText(R.string.login_to_comments);
             mEmptyView.setOnClickListener(this);
+            mEmptyView.setBackgroundResource(R.drawable.list_item_bkg);
             mEmptyView.setVisibility(View.VISIBLE);
         } else {
             mCommentView.requestComment(mFeed.id);
@@ -168,6 +169,7 @@ public class DetailsFragment extends Fragment implements JSCallback, View.OnClic
     public void onCommentError(String s) {
         mEmptyView.setTextColor(getResources().getColor(R.color.text_color_regular));
         mEmptyView.setText(s);
+        mEmptyView.setBackgroundResource(R.drawable.black_0_transparent);
         if (mEmptyView.getVisibility() != View.VISIBLE) {
             mEmptyView.setVisibility(View.VISIBLE);
         }

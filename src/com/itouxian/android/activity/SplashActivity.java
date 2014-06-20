@@ -13,12 +13,15 @@ import com.flurry.android.FlurryAgent;
 import com.itouxian.android.FileCache;
 import com.itouxian.android.PrefsUtil;
 import com.itouxian.android.R;
+import com.itouxian.android.util.Constants;
 import com.itouxian.android.util.FileUtils;
 import com.itouxian.android.util.Utils;
 import net.youmi.android.AdManager;
 import net.youmi.android.spot.SpotManager;
 
 import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by chenjishi on 14-2-15.
@@ -96,13 +99,10 @@ public class SplashActivity extends Activity {
             if (null != appInfo.metaData) {
                 String channel = appInfo.metaData.getString("CHANNEL");
 
-//                Map<String, String> params = new HashMap<String, String>();
-//                params.put("name", channel);
-//                params.put("version", Utils.getVersionName(this));
-//
-//                FlurryAgent.logEvent("CHANNEL", params);
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("name", channel);
+                FlurryAgent.logEvent(Constants.FLURRY_CHANNEL, params);
 
-                FlurryAgent.logEvent(channel);
                 int versionCode = Utils.getVersionCode(this);
                 PrefsUtil.saveChannels(channel + "|" + versionCode);
             }

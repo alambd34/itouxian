@@ -25,6 +25,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import com.flurry.android.FlurryAgent;
 import com.itouxian.android.FileCache;
 import com.itouxian.android.PrefsUtil;
 import com.itouxian.android.R;
@@ -41,7 +42,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.itouxian.android.util.Constants.URL_UPLOAD;
+import static com.itouxian.android.util.Constants.*;
 
 /**
  * Created by chenjishi on 14-3-30.
@@ -216,6 +217,8 @@ public class FeedPostActivity extends BaseActivity implements FileUploadCallback
         PrefsUtil.saveDraft(content, tags, mImagePath);
 
         finish();
+
+        FlurryAgent.logEvent(FLURRY_POST_BUTTON);
     }
 
     private void adjustPictureSize(String filePath) {
@@ -266,12 +269,17 @@ public class FeedPostActivity extends BaseActivity implements FileUploadCallback
             PrefsUtil.saveDraft("", "", "");
         }
 
+        FlurryAgent.logEvent(0 == code ? FLURRY_POST_SUCCESS : FLURRY_POST_FAIL);
+
         Utils.showToast(code == 0 ? R.string.post_success : R.string.post_error);
     }
 
     @Override
     public void onFailure(int statusCode, String response, Throwable e) {
         Utils.showToast(R.string.post_error);
+        if (Utils.didNetworkConnected(this)) {
+            FlurryAgent.logEvent(FLURRY_POST_FAIL);
+        }
     }
 
     private int getTextHeight(float f) {

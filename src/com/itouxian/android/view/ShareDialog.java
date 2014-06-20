@@ -4,8 +4,9 @@ import android.app.Dialog;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.text.TextUtils;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
@@ -123,13 +124,37 @@ public class ShareDialog extends Dialog implements View.OnClickListener, Request
     private void shareToWB() {
         Oauth2AccessToken token = PrefsUtil.getAccessToken();
 
-        String content = getContent();
+        String content = null;
+        if (!TextUtils.isEmpty(mFeed.contents)) {
+            content = mFeed.contents.replaceAll("<p>|<\\/p>|&(.*?);", "");
+            content = content.replaceAll("<br(.*?)>", "");
+            content = content.replaceAll("<a(.*?)<\\/a>", "");
+            content = content.replaceAll("<div>|<\\/div>", "");
+        }
+
+        if (TextUtils.isEmpty(content)) {
+            content = mFeed.title;
+        }
+
+        if (content.length() >= 140) {
+            content = content.substring(0, 138);
+        }
+
         String imageUrl = mFeed.imageUrl;
         if (!token.isSessionValid()) {
             authorize(content, imageUrl);
         } else {
-            StatusesAPI api = new StatusesAPI(token);
+            updateStatus(content, imageUrl, token);
+        }
+    }
+
+    private void updateStatus(String content, String imageUrl, Oauth2AccessToken token) {
+        StatusesAPI api = new StatusesAPI(token);
+
+        if (!TextUtils.isEmpty(imageUrl)) {
             api.uploadUrlText(content, imageUrl, null, null, null, this);
+        } else {
+            api.update(content, null, null, this);
         }
     }
 
@@ -207,12 +232,7 @@ public class ShareDialog extends Dialog implements View.OnClickListener, Request
                 Oauth2AccessToken accessToken = Oauth2AccessToken.parseAccessToken(bundle);
                 PrefsUtil.saveAccessToken(accessToken);
 
-                Log.i("test", accessToken.toString());
-                Log.i("test", "token  " + accessToken.getToken());
-                Log.i("test", "expire " + accessToken.getExpiresTime());
-
-                StatusesAPI api = new StatusesAPI(accessToken);
-                api.uploadUrlText(content, imageUrl, null, null, null, ShareDialog.this);
+                updateStatus(content, imageUrl, accessToken);
             }
 
             @Override
@@ -224,7 +244,7 @@ public class ShareDialog extends Dialog implements View.OnClickListener, Request
             public void onCancel() {
 
             }
-        }, WeiboAuth.OBTAIN_AUTH_CODE);
+        }, WeiboAuth.OBTAIN_AUTH_TOKEN);
     }
 
     private String getContent() {
@@ -282,26 +302,31 @@ public class ShareDialog extends Dialog implements View.OnClickListener, Request
 
     @Override
     public void onComplete(String response) {
-        Log.i("test", "response " + response);
-
+        showWeiboMessage(true);
     }
 
     @Override
     public void onComplete4binary(ByteArrayOutputStream responseOS) {
-
     }
 
     @Override
     public void onIOException(IOException e) {
-        Log.i("test", "onIOException " + e);
-
-
+        showWeiboMessage(false);
     }
 
     @Override
     public void onError(WeiboException e) {
-        Log.i("test", "WeiboException " + e);
+        showWeiboMessage(false);
+    }
 
-
+    private void showWeiboMessage(final boolean success) {
+        Handler mainThread = new Handler(Looper.getMainLooper());
+        mainThread.post(new Runnable() {
+            @Override
+            public void run() {
+                Utils.showToast(success ? R.string.weibo_share_success :
+                R.string.weibo_share_fail);
+            }
+        });
     }
 }

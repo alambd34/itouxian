@@ -28,6 +28,8 @@ import com.itouxian.android.view.AboutDialog;
 import com.itouxian.android.view.ExitDialog;
 import com.itouxian.android.view.FireworksView;
 import com.itouxian.android.view.LoginDialog;
+import net.youmi.android.AdManager;
+import net.youmi.android.dev.OnlineConfigCallBack;
 import net.youmi.android.spot.SpotManager;
 import volley.toolbox.ImageLoader;
 
@@ -127,6 +129,31 @@ public class MainActivity extends BaseActivity implements View.OnClickListener,
         mTabGroup.setOnCheckedChangeListener(this);
         mTabGroup.check(TAB_BUTTON_ID);
 
+        initAds();
+    }
+
+    private void initAds() {
+        AdManager.getInstance(this).asyncGetOnlineConfig("ads_enable", new OnlineConfigCallBack() {
+            @Override
+            public void onGetOnlineConfigSuccessful(String s, String s2) {
+                if (TextUtils.isEmpty(s2)) {
+                    showAds();
+                } else {
+                    if (s2.equals("true")) {
+                        showAds();
+                    }
+                }
+            }
+
+            @Override
+            public void onGetOnlineConfigFailed(String s) {
+                showAds();
+            }
+        });
+
+    }
+
+    private void showAds() {
         mTitleText.postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -137,6 +164,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener,
     }
 
     private LinearLayout mMenuContainer;
+
     private void updateMenuList(boolean isLogin) {
         mMenuContainer = (LinearLayout) findViewById(R.id.left_view);
         mMenuContainer.removeAllViews();
@@ -459,7 +487,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener,
         RelativeLayout rightView = (RelativeLayout) findViewById(R.id.right_view);
         if (null != rightView) {
             rightView.setBackgroundResource(MODE_NIGHT == theme ? R.drawable.feedback_bkg_night :
-            R.drawable.feedback_bkg);
+                    R.drawable.feedback_bkg);
         }
 
         ((TextView) findViewById(R.id.title_text)).setTextColor(Color.WHITE);
