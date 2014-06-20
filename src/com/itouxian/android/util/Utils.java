@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
@@ -36,6 +37,10 @@ import java.util.concurrent.atomic.AtomicInteger;
  * To change this template use File | Settings | File Templates.
  */
 public class Utils {
+    public static int getColor(Resources res, int resId) {
+        return res.getColor(resId);
+    }
+
     public static void setErrorView(View errorView, int resId) {
         setErrorView(errorView, App.getInstance().getString(resId));
     }

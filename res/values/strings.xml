@@ -56,6 +56,7 @@
     <string name="comment_empty">评论不能为空</string>
     <string name="comment">评论</string>
     <string name="no_comment">暂无评论</string>
+    <string name="comment_fetch_fail">获取评论失败，请检查网络连接</string>
     <string name="comment_from">%1$s (来自Android客户端)</string>
     <string name="comment_fail">评论失败，请稍后再试</string>
     <string name="comment_success">评论成功</string>
@@ -70,6 +71,7 @@
     <string name="image_save_fail">下载失败,请重试...</string>
     <string name="share_from">来自爱偷闲的分享</string>
     <string name="share_image_fail">图片分享失败，请稍后再试</string>
+    <string name="login_to_comments">点击登陆查看评论</string>
 
     <string name="pub_time">%1$s&#160;&#160;%2$s</string>
     <string name="pub_reviews">%1$d人看过</string>

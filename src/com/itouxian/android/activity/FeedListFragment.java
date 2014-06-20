@@ -425,8 +425,7 @@ public class FeedListFragment extends Fragment implements Response.Listener<Feed
 
             DisplayMetrics metrics = getResources().getDisplayMetrics();
             int width = metrics.widthPixels;
-            float density = metrics.density;
-            mImageWidth = width - (int) ((8 * 2 + 8 * 2) * density + .5f);
+            mImageWidth = width - Utils.dp2px(context, 8) * 2;
 
             mLayoutParams = new RelativeLayout.LayoutParams(mImageWidth, ViewGroup.LayoutParams.WRAP_CONTENT);
             mLayoutParams.addRule(RelativeLayout.CENTER_HORIZONTAL);
@@ -553,7 +552,7 @@ public class FeedListFragment extends Fragment implements Response.Listener<Feed
 
             holder.mContainer.setBackgroundResource(theme == MODE_NIGHT ? R.drawable.card_bkg_night :
                     R.drawable.card_bkg);
-            holder.mContainer.setPadding(mPadding, mPadding, mPadding, mPadding);
+            holder.mContainer.setPadding(0, mPadding, 0, mPadding);
 
             final Feed feed = getItem(position);
 

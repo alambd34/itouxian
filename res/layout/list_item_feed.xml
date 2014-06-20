@@ -9,17 +9,17 @@
     <RelativeLayout
             android:id="@+id/item_container"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:padding="8dp">
+            android:layout_height="wrap_content">
         <ImageView
                 android:id="@id/avatar"
                 android:layout_width="32dp"
                 android:layout_height="32dp"
+                android:layout_alignParentLeft="true"
                 android:contentDescription="@null"
+                android:layout_marginLeft="8dp"
                 android:layout_marginRight="8dp"
                 android:layout_marginBottom="12dp"
-                android:scaleType="centerCrop"
-                android:layout_alignParentLeft="true"/>
+                android:scaleType="centerCrop"/>
         <TextView
                 android:id="@id/user_name"
                 android:layout_width="wrap_content"
@@ -38,8 +38,10 @@
                 android:textSize="12sp"/>
         <TextView
                 android:id="@id/feed_title"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:paddingLeft="8dp"
+                android:paddingRight="8dp"
                 android:textColor="@color/text_color_regular"
                 android:textSize="17sp"
                 android:layout_marginBottom="8dp"
@@ -48,6 +50,8 @@
                 android:id="@id/content"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:paddingLeft="8dp"
+                android:paddingRight="8dp"
                 android:layout_below="@id/feed_title"
                 android:lineSpacingExtra="6dp"
                 android:textSize="15sp"
@@ -62,7 +66,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="1px"
                 android:layout_below="@id/content_box"
+                android:layout_marginLeft="8dp"
                 android:layout_marginTop="12dp"
+                android:layout_marginRight="8dp"
                 android:layout_marginBottom="4dp"
                 android:background="#EEEEEE"/>
         <TextView
@@ -78,6 +84,7 @@
                 android:drawableLeft="@drawable/ic_up"
                 android:layout_below="@id/split_h"
                 android:layout_alignParentLeft="true"
+                android:layout_marginLeft="8dp"
                 android:layout_marginRight="16dp"/>
         <TextView
                 android:id="@id/down_count"
@@ -102,6 +109,7 @@
                 android:layout_marginLeft="12dp"
                 android:drawableLeft="@drawable/ic_coment_small"
                 android:drawablePadding="2dp"
+                android:layout_marginRight="8dp"
                 android:background="@drawable/highlight_color"
                 android:focusable="false"
                 android:padding="8dp"

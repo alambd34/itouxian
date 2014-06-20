@@ -10,7 +10,6 @@ import android.text.TextUtils;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import com.itouxian.android.PrefsUtil;
 import com.itouxian.android.R;
 import com.itouxian.android.model.Feed;
@@ -20,8 +19,6 @@ import com.itouxian.android.util.Utils;
 import com.itouxian.android.view.CircleView;
 import com.itouxian.android.view.LoginDialog;
 import com.itouxian.android.view.ShareDialog;
-import net.youmi.android.banner.AdSize;
-import net.youmi.android.banner.AdView;
 import org.json.JSONException;
 import org.json.JSONObject;
 import volley.Response;
@@ -62,10 +59,6 @@ public class DetailsActivity extends BaseActivity implements ViewPager.OnPageCha
         mViewPager.setOnPageChangeListener(this);
         mViewPager.setCurrentItem(mCurrentIndex);
         setCommentNumber(mCurrentIndex);
-
-        AdView adView = new AdView(this, AdSize.FIT_SCREEN);
-        LinearLayout adLayout = (LinearLayout) findViewById(R.id.adLayout);
-        adLayout.addView(adView);
     }
 
     @Override

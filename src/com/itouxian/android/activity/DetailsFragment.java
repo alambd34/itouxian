@@ -1,15 +1,20 @@
 package com.itouxian.android.activity;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
-import android.util.Log;
+import android.util.TypedValue;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
+import android.widget.AbsListView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 import com.itouxian.android.PrefsUtil;
 import com.itouxian.android.R;
 import com.itouxian.android.model.Feed;
@@ -18,7 +23,10 @@ import com.itouxian.android.util.Constants;
 import com.itouxian.android.util.JSCallback;
 import com.itouxian.android.util.JavaScriptBridge;
 import com.itouxian.android.util.Utils;
-import com.itouxian.android.view.CircleView;
+import com.itouxian.android.view.CommentCallback;
+import com.itouxian.android.view.CommentListView;
+import com.itouxian.android.view.CommentPostView;
+import com.itouxian.android.view.LoginDialog;
 
 import java.text.Format;
 import java.text.SimpleDateFormat;
@@ -31,15 +39,19 @@ import static com.itouxian.android.util.Constants.MODE_NIGHT;
 /**
  * Created by chenjishi on 14-5-30.
  */
-public class DetailsFragment extends Fragment implements JSCallback {
+public class DetailsFragment extends Fragment implements JSCallback, View.OnClickListener,
+        LoginDialog.OnLoginListener, CommentCallback {
     private WebView mWebView;
+    private TextView mEmptyView;
 
     private Feed mFeed;
     private JavaScriptBridge mJsBridge;
 
     private int mThemeMode;
 
-    @Override
+    private CommentListView mCommentView;
+    private CommentPostView mCommentPostView;
+
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Bundle bundle = getArguments();
@@ -54,14 +66,40 @@ public class DetailsFragment extends Fragment implements JSCallback {
         View view = inflater.inflate(R.layout.fragment_details, container, false);
         view.setBackgroundColor(MODE_NIGHT == mThemeMode ? 0xFF222222 : 0xFFF0F0F0);
 
-        mWebView = (WebView) view.findViewById(R.id.web_view);
+        Context context = getActivity();
+        LinearLayout headerView = new LinearLayout(context);
+        headerView.setOrientation(LinearLayout.VERTICAL);
+        headerView.setLayoutParams(new AbsListView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT));
+
+        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT);
+
+        mWebView = new WebView(context);
+        mWebView.setLayoutParams(lp);
         mWebView.setBackgroundColor(0x00000000);
         mWebView.setHorizontalScrollBarEnabled(false);
         mWebView.setScrollBarStyle(View.SCROLLBARS_INSIDE_OVERLAY);
         mWebView.addJavascriptInterface(mJsBridge, "U148");
-
         WebSettings settings = mWebView.getSettings();
         settings.setJavaScriptEnabled(true);
+        headerView.addView(mWebView);
+
+        int paddingTop = Utils.dp2px(context, 24);
+        mEmptyView = new TextView(context);
+        mEmptyView.setLayoutParams(lp);
+        mEmptyView.setPadding(0, paddingTop, 0, paddingTop);
+        mEmptyView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 18.f);
+        mEmptyView.setGravity(Gravity.CENTER);
+        mEmptyView.setVisibility(View.GONE);
+        headerView.addView(mEmptyView);
+
+        mCommentPostView = (CommentPostView) view.findViewById(R.id.comment_post_view);
+        mCommentPostView.setCallback(this);
+
+        mCommentView = (CommentListView) view.findViewById(R.id.list_comment);
+        mCommentView.addHeaderView(headerView);
+        mCommentView.setOnCommentFetchCallback(this);
 
         return view;
     }
@@ -97,6 +135,55 @@ public class DetailsFragment extends Fragment implements JSCallback {
         template = template.replace("{SCREEN_MODE}", mThemeMode == MODE_NIGHT ? "night" : "");
 
         mWebView.loadDataWithBaseURL(null, template, "text/html", "UTF-8", null);
+
+        if (!Utils.isLogin()) {
+            mEmptyView.setTextColor(getResources().getColor(R.color.action_bar_color));
+            mEmptyView.setText(R.string.login_to_comments);
+            mEmptyView.setOnClickListener(this);
+            mEmptyView.setVisibility(View.VISIBLE);
+        } else {
+            mCommentView.requestComment(mFeed.id);
+        }
+
+        mCommentPostView.setCommentId(mFeed.id);
+    }
+
+    @Override
+    public void onClick(View v) {
+        new LoginDialog(getActivity(), this).show();
+    }
+
+    @Override
+    public void onLoginSuccess() {
+        mEmptyView.setVisibility(View.GONE);
+        mCommentView.requestComment(mFeed.id);
+    }
+
+    @Override
+    public void onLoginError() {
+
+    }
+
+    @Override
+    public void onCommentError(String s) {
+        mEmptyView.setTextColor(getResources().getColor(R.color.text_color_regular));
+        mEmptyView.setText(s);
+        if (mEmptyView.getVisibility() != View.VISIBLE) {
+            mEmptyView.setVisibility(View.VISIBLE);
+        }
+    }
+
+    @Override
+    public void onCommentPostSuccess() {
+        mCommentView.refreshComment(mFeed.id);
+        if (mEmptyView.getVisibility() == View.VISIBLE) {
+            mEmptyView.setVisibility(View.GONE);
+        }
+    }
+
+    @Override
+    public void onCommentClicked(long id, String name) {
+        mCommentPostView.setReplyId(id, name);
     }
 
     @Override

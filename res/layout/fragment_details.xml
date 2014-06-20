@@ -3,14 +3,16 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
              android:layout_width="match_parent"
              android:layout_height="match_parent">
-    <WebView
-            android:id="@+id/web_view"
+    <com.itouxian.android.view.CommentListView
+            android:id="@+id/list_comment"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:scrollbarThumbHorizontal="@drawable/scrollbar_vertical_track"
-            android:scrollbarTrackVertical="@drawable/scrollbar_vertical_track"
             android:scrollbarThumbVertical="@drawable/scrollbar_vertical_thumb"
             android:scrollbarSize="4dp"
-            android:fadingEdge="none"
-            android:padding="8dp"/>
+            android:paddingBottom="48dp"/>
+    <com.itouxian.android.view.CommentPostView
+            android:id="@+id/comment_post_view"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_gravity="bottom"/>
 </FrameLayout>
