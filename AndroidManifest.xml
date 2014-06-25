@@ -19,7 +19,7 @@
                  android:name=".App"
                  android:theme="@android:style/Theme.NoTitleBar">
         <meta-data android:name="YOUMI_CHANNEL" android:value="10440"/>
-        <meta-data android:name="CHANNEL" android:value="xiaomi"/>
+        <meta-data android:name="CHANNEL" android:value="google_play"/>
         <activity android:name=".activity.SplashActivity"
                   android:launchMode="singleTop"
                   android:theme="@android:style/Theme.NoTitleBar.Fullscreen"

@@ -2,9 +2,9 @@ package com.itouxian.android.model;
 
 import android.os.Parcel;
 import android.os.Parcelable;
-import com.itouxian.android.util.ConstantUtil;
 
 import java.util.ArrayList;
+import static com.itouxian.android.util.Constants.FEED_UNKNOWN;
 
 /**
  * Created by chenjishi on 14-3-15.
@@ -38,7 +38,7 @@ public class Feed implements Parcelable {
     public long editor_uid;
     public UserInfo usr;
     public int count_hold;
-    public int feed_type = ConstantUtil.FEED_UNKNOWN;
+    public int feed_type = FEED_UNKNOWN;
 
     public static final Creator<Feed> CREATOR = new Creator<Feed>() {
         @Override

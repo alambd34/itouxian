@@ -15,10 +15,12 @@
     <string name="register">注册</string>
     <string name="settings">设置</string>
     <string name="favorite">收藏</string>
-    <string name="commend">评分</string>
+    <string name="commend">点赞</string>
     <string name="about">关于</string>
     <string name="night">夜间</string>
     <string name="day">日间</string>
+
+    <string name="google_play_unavailable">无法打开Google Play</string>
 
     <string name="password_hint">6 ~ 16位密码</string>
     <string name="nick_name_hint">昵称，不超过25字，中文不超过12字</string>
@@ -83,4 +85,6 @@
     <string name="close_dialog">关闭窗口</string>
 
     <string name="login_input_empty">请输入用户名和密码</string>
+    <string name="updating_app">正在更新应用程序&#8230;</string>
+    <string name="new_version_tip">程序版本更新了哦，需要更新吗?</string>
 </resources>

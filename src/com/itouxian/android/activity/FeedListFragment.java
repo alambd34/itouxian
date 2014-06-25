@@ -41,7 +41,6 @@ import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static com.itouxian.android.util.ConstantUtil.*;
 import static com.itouxian.android.util.Constants.*;
 import static com.itouxian.android.util.Constants.MODE_NIGHT;
 

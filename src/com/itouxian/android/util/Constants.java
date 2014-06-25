@@ -29,6 +29,7 @@ public class Constants {
     public static final String URL_REGISTER = HOST_PATH + "register";
     public static final String URL_LOGIN = HOST_PATH + "login";
     public static final String URL_UPLOAD = HOST_PATH + "upload";
+    public static final String URL_UPDATE = HOST_PATH + "version";
 
     public static final String BUNDLE_KEY_FEED = "feed";
     public static final String KEY_FEED_LIST = "feed_list";
@@ -39,6 +40,13 @@ public class Constants {
 
     public static final int MODE_DAY = 0;
     public static final int MODE_NIGHT = 1;
+
+    public static int FEED_UNKNOWN = 0;
+    public static int FEED_TEXT = 1;
+    public static int FEED_SINGLE_IMAGE = 2;
+    public static int FEED_IMAGE_GIF = 3;
+    public static int FEED_VIDEO = 4;
+    public static int FEED_MUSIC = 5;
 
     public static final String WX_APP_ID = "wxf862baa09e0df157";
     public static final String WEIBO_APP_KEY = "1792649719";

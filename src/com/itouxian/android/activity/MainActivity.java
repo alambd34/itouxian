@@ -1,11 +1,16 @@
 package com.itouxian.android.activity;
 
-import android.content.Intent;
+import android.app.AlertDialog;
+import android.app.DownloadManager;
+import android.content.*;
+import android.database.Cursor;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.StateListDrawable;
 import android.media.MediaPlayer;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -20,6 +25,7 @@ import android.view.WindowManager;
 import android.widget.*;
 import com.itouxian.android.PrefsUtil;
 import com.itouxian.android.R;
+import com.itouxian.android.model.UpdateInfo;
 import com.itouxian.android.model.UserInfo;
 import com.itouxian.android.util.Constants;
 import com.itouxian.android.util.HttpUtils;
@@ -31,11 +37,12 @@ import com.itouxian.android.view.LoginDialog;
 import net.youmi.android.AdManager;
 import net.youmi.android.dev.OnlineConfigCallBack;
 import net.youmi.android.spot.SpotManager;
+import volley.Response;
+import volley.VolleyError;
 import volley.toolbox.ImageLoader;
 
 import static com.itouxian.android.activity.FeedListFragment.*;
-import static com.itouxian.android.util.ConstantUtil.MODE_DAY;
-import static com.itouxian.android.util.ConstantUtil.MODE_NIGHT;
+import static com.itouxian.android.util.Constants.*;
 
 public class MainActivity extends BaseActivity implements View.OnClickListener,
         DrawerLayout.DrawerListener, LoginDialog.OnLoginListener,
@@ -58,6 +65,35 @@ public class MainActivity extends BaseActivity implements View.OnClickListener,
     private RadioGroup mTabGroup;
     private ViewPager mViewPager;
     private View mDividerView;
+
+    private long mDownloadId;
+    private boolean mDownloadReceiverRegistered = false;
+
+    private BroadcastReceiver mDownloadCompleteReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            long id = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, 0L);
+            if (id != mDownloadId) return;
+
+            DownloadManager downloadManager = (DownloadManager) getSystemService(Context.DOWNLOAD_SERVICE);
+            DownloadManager.Query query = new DownloadManager.Query();
+            query.setFilterById(id);
+            Cursor cursor = downloadManager.query(query);
+
+            if (!cursor.moveToFirst()) return;
+
+            int statusIndex = cursor.getColumnIndex(DownloadManager.COLUMN_STATUS);
+            if (DownloadManager.STATUS_SUCCESSFUL != cursor.getInt(statusIndex)) {
+                return;
+            }
+
+            int uriIndex = cursor.getColumnIndex(DownloadManager.COLUMN_LOCAL_URI);
+            String apkUriString = cursor.getString(uriIndex);
+
+            installApk(apkUriString);
+
+        }
+    };
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -130,6 +166,72 @@ public class MainActivity extends BaseActivity implements View.OnClickListener,
         mTabGroup.check(TAB_BUTTON_ID);
 
         initAds();
+
+        checkUpdate();
+    }
+
+    private void checkUpdate() {
+        if (!Utils.isWifiConnected(this)) return;
+
+        long lastCheckTime = PrefsUtil.getLongPreferences(PrefsUtil.KEY_CHECK_UPDATE_TIME, -1L);
+        long currentTime = System.currentTimeMillis();
+        if (lastCheckTime == -1 || currentTime >= lastCheckTime) {
+            HttpUtils.get(URL_UPDATE, UpdateInfo.class, new Response.Listener<UpdateInfo>() {
+                @Override
+                public void onResponse(UpdateInfo response) {
+                    if (null == response || null == response.data) return;
+
+                    UpdateInfo.UpdateData data = response.data;
+
+                    int currentCode = Utils.getVersionCode(MainActivity.this);
+                    if (data.versionCode > currentCode) {
+                        downloadApk(data.url);
+                    }
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+
+                }
+            });
+
+            PrefsUtil.saveLongPreference(PrefsUtil.KEY_CHECK_UPDATE_TIME, currentTime + 24 * 60 * 60 * 1000L);
+        }
+    }
+
+    private void downloadApk(final String url) {
+        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage(getString(R.string.new_version_tip))
+                .setPositiveButton(R.string.confirm, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        startDownload(url);
+                    }
+                })
+                .setNegativeButton(R.string.cancel, null);
+        builder.show();
+    }
+
+    private void startDownload(String url) {
+        IntentFilter intentFilter = new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE);
+        registerReceiver(mDownloadCompleteReceiver, intentFilter);
+        mDownloadReceiverRegistered = true;
+
+        DownloadManager downloadManager = (DownloadManager) getSystemService(Context.DOWNLOAD_SERVICE);
+
+        DownloadManager.Request request = new DownloadManager.Request(Uri.parse(url));
+        request.setAllowedNetworkTypes(DownloadManager.Request.NETWORK_WIFI)
+                .setTitle(getString(R.string.app_name))
+                .setDescription(getString(R.string.updating_app))
+                .setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, "itouxian.apk");
+        mDownloadId = downloadManager.enqueue(request);
+    }
+
+    private void installApk(String uri) {
+        Intent i = new Intent(Intent.ACTION_VIEW);
+        i.setDataAndType(Uri.parse(uri), "application/vnd.android.package-archive");
+        i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(i);
     }
 
     private void initAds() {
@@ -150,7 +252,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener,
                 showAds();
             }
         });
-
     }
 
     private void showAds() {
@@ -219,12 +320,14 @@ public class MainActivity extends BaseActivity implements View.OnClickListener,
                 R.string.settings,
                 PrefsUtil.getThemeMode() == MODE_DAY ? R.string.night : R.string.day,
                 R.string.favorite,
+                R.string.commend,
                 R.string.about};
 
         int[] iconIds = {
                 R.drawable.ic_settings,
                 R.drawable.ic_bulb,
                 R.drawable.ic_favorite_menu,
+                R.drawable.ic_star,
                 R.drawable.ic_info};
 
 
@@ -400,6 +503,15 @@ public class MainActivity extends BaseActivity implements View.OnClickListener,
                 }
                 break;
             case 6:
+                Uri uri = Uri.parse("market://details?id=" + getPackageName());
+                Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+                try {
+                    startActivity(intent);
+                } catch (ActivityNotFoundException e) {
+                    Utils.showToast(R.string.google_play_unavailable);
+                }
+                break;
+            case 7:
                 AboutDialog dialog = new AboutDialog(this, new AboutDialog.AboutDialogListener() {
                     @Override
                     public void onVersionClicked() {
@@ -431,7 +543,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener,
 
     @Override
     public void onBackPressed() {
-        if (SpotManager.getInstance(this).disMiss()) {
+        if (SpotManager.getInstance(this).disMiss(true)) {
             return;
         }
 
@@ -456,13 +568,16 @@ public class MainActivity extends BaseActivity implements View.OnClickListener,
 
     @Override
     protected void onStop() {
-        SpotManager.getInstance(this).disMiss();
+        SpotManager.getInstance(this).disMiss(false);
         super.onStop();
     }
 
     @Override
     protected void onDestroy() {
         SpotManager.getInstance(this).unregisterSceenReceiver();
+        if (mDownloadReceiverRegistered) {
+            unregisterReceiver(mDownloadCompleteReceiver);
+        }
         super.onDestroy();
         if (null != mPlayer) {
             mPlayer.release();
